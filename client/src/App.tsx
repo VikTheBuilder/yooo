@@ -1,7 +1,7 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './context/AuthContext';
+import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -12,16 +12,43 @@ import EditListingPage from './pages/EditListingPage';
 import MyListingsPage from './pages/MyListingsPage';
 import RequestsPage from './pages/RequestsPage';
 
-function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
-}
-
 export default function App() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0B1020] text-slate-100 flex flex-col selection:bg-indigo-500/30 selection:text-white">
+      {/* Toast Notification Container */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3500,
+          style: {
+            background: 'rgba(15, 23, 42, 0.95)',
+            color: '#f8fafc',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '1rem',
+            padding: '12px 16px',
+            fontSize: '0.85rem',
+            fontWeight: 500,
+            boxShadow: '0 20px 30px -10px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.15)',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#ffffff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#f43f5e',
+              secondary: '#ffffff',
+            },
+          },
+        }}
+      />
+
       <Navbar />
-      <main>
+
+      <main className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -29,24 +56,58 @@ export default function App() {
           <Route path="/listings" element={<ListingsPage />} />
           <Route path="/listings/:id" element={<ListingDetailPage />} />
           <Route path="/requests" element={<RequestsPage />} />
-          <Route path="/create" element={
-            <PrivateRoute><CreateListingPage /></PrivateRoute>
-          } />
-          <Route path="/listings/:id/edit" element={
-            <PrivateRoute><EditListingPage /></PrivateRoute>
-          } />
-          <Route path="/my-listings" element={
-            <PrivateRoute><MyListingsPage /></PrivateRoute>
-          } />
-          <Route path="/my-transactions" element={
-            <PrivateRoute><MyListingsPage /></PrivateRoute>
-          } />
-          <Route path="/my-requests" element={
-            <PrivateRoute><MyListingsPage /></PrivateRoute>
-          } />
-          <Route path="/dashboard" element={
-            <PrivateRoute><MyListingsPage /></PrivateRoute>
-          } />
+
+          {/* Protected Routes */}
+          <Route
+            path="/create"
+            element={
+              <ProtectedRoute>
+                <CreateListingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/listings/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditListingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-listings"
+            element={
+              <ProtectedRoute>
+                <MyListingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-transactions"
+            element={
+              <ProtectedRoute>
+                <MyListingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-requests"
+            element={
+              <ProtectedRoute>
+                <MyListingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <MyListingsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
