@@ -2,21 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Save, AlertCircle, ArrowLeft } from 'lucide-react';
-import type { Listing, ListingCategory, ListingMode, ListingCondition, ListingStatus } from '../types';
+import type { Listing, ListingCategory, ListingMode, ListingCondition } from '../types';
 import { CATEGORY_META, MODE_META, CONDITION_LABELS, SEMESTER_OPTIONS } from '../lib/constants';
 import api from '../lib/api';
 
 const CATEGORIES = Object.keys(CATEGORY_META) as ListingCategory[];
 const MODES = Object.keys(MODE_META) as ListingMode[];
 const CONDITIONS = Object.keys(CONDITION_LABELS) as ListingCondition[];
-const STATUSES: { value: ListingStatus; label: string }[] = [
-  { value: 'available', label: 'Available' },
-  { value: 'sold', label: 'Sold' },
-  { value: 'rented', label: 'Rented' },
-  { value: 'swapped', label: 'Swapped' },
-  { value: 'closed', label: 'Closed / Inactive' },
-];
-
 export default function EditListingPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -32,7 +24,6 @@ export default function EditListingPage() {
     price: '',
     rent_price_per_week: '',
     swap_wanted: '',
-    status: 'available' as ListingStatus,
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -53,7 +44,6 @@ export default function EditListingPage() {
           price: l.price != null ? String(l.price) : '',
           rent_price_per_week: l.rent_price_per_week != null ? String(l.rent_price_per_week) : '',
           swap_wanted: l.swap_wanted ?? '',
-          status: l.status,
         });
       })
       .catch(() => navigate('/my-listings'))
@@ -81,10 +71,9 @@ export default function EditListingPage() {
         price: form.mode === 'sell' && form.price !== '' ? parseFloat(form.price) : null,
         rent_price_per_week: form.mode === 'rent' && form.rent_price_per_week !== '' ? parseFloat(form.rent_price_per_week) : null,
         swap_wanted: form.mode === 'swap' ? form.swap_wanted.trim() : null,
-        status: form.status,
       };
       await api.put(`/listings/${id}`, payload);
-      navigate(`/listings/${id}`);
+      navigate(`/listing/${id}`);
     } catch (err: any) {
       setError(err.response?.data?.error ?? err.response?.data?.errors?.[0] ?? 'Failed to update listing.');
     } finally {
@@ -113,7 +102,7 @@ export default function EditListingPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-white mb-1">Edit Listing</h1>
-            <p className="text-slate-400 text-sm">Update item details or manage status.</p>
+            <p className="text-slate-400 text-sm">Update the details students see on your listing.</p>
           </div>
 
           <div className="glass p-8">
@@ -130,16 +119,6 @@ export default function EditListingPage() {
             )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              {/* Status */}
-              <div>
-                <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Listing Status</label>
-                <select className="input" name="status" value={form.status} onChange={handleChange}>
-                  {STATUSES.map(s => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
-                  ))}
-                </select>
-              </div>
-
               {/* Title */}
               <div>
                 <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Title</label>

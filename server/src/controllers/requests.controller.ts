@@ -13,21 +13,28 @@ type RequestRow = {
   note: string | null;
   status: string;
   created_at: string;
-  requester_name?: string;
-  requester_hostel?: string;
+  user_name?: string;
+  hostel?: string;
+  user_email?: string;
 };
 
 const SELECT_WITH_USER = `
-  SELECT r.*, u.name AS requester_name, u.hostel AS requester_hostel
+  SELECT r.*, u.name AS user_name, u.hostel AS hostel, u.email AS user_email
+  FROM requests r
+  JOIN users u ON u.id = r.user_id
+`;
+const SELECT_PUBLIC_WITH_USER = `
+  SELECT r.*, u.name AS user_name, u.hostel AS hostel
   FROM requests r
   JOIN users u ON u.id = r.user_id
 `;
 
 // ── GET /api/requests ─────────────────────────────────────────────────────────
 
-export function getRequests(_req: AuthRequest, res: Response): void {
+export function getRequests(req: AuthRequest, res: Response): void {
+  const select = req.userId ? SELECT_WITH_USER : SELECT_PUBLIC_WITH_USER;
   const requests = db.prepare(
-    `${SELECT_WITH_USER} WHERE r.status = 'open' ORDER BY r.created_at DESC`,
+    `${select} WHERE r.status = 'open' ORDER BY r.created_at DESC`,
   ).all() as RequestRow[];
   ok(res, { requests });
 }

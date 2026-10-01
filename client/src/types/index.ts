@@ -30,7 +30,7 @@ export interface Listing {
   seller_name?: string;
   seller_hostel?: string;
   seller_batch?: string;
-  seller_email?: string;
+  has_transactions?: boolean | number;
 }
 
 export interface RequestItem {

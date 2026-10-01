@@ -50,7 +50,7 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { to: '/listings', label: 'Browse', icon: Compass },
+    { to: '/', label: 'Browse', icon: Compass },
     { to: '/requests', label: 'Requests', icon: HelpCircle },
     { to: '/create', label: 'Sell', icon: PlusCircle, highlight: true },
     ...(isAuthenticated ? [{ to: '/my-listings', label: 'My Activity', icon: LayoutDashboard }] : []),
@@ -78,7 +78,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden md:flex items-center gap-1.5 bg-white/[0.03] p-1.5 rounded-2xl border border-white/[0.06] backdrop-blur-md">
+            <nav className="hidden lg:flex items-center gap-1.5 bg-white/[0.03] p-1.5 rounded-2xl border border-white/[0.06] backdrop-blur-md">
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 const isActive = location.pathname === link.to;
@@ -190,7 +190,7 @@ export default function Navbar() {
                   </AnimatePresence>
                 </div>
               ) : (
-                <div className="hidden sm:flex items-center gap-2">
+                <div className="hidden lg:flex items-center gap-2">
                   <Link
                     to="/login"
                     className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-all"
@@ -209,7 +209,8 @@ export default function Navbar() {
               {/* Mobile Hamburger Toggle Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2.5 rounded-xl bg-white/[0.05] hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-all cursor-pointer"
+                className="lg:hidden p-2.5 rounded-xl bg-white/[0.05] hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-all cursor-pointer"
+                aria-expanded={mobileMenuOpen}
                 aria-label="Toggle Navigation Menu"
               >
                 {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -227,7 +228,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="md:hidden w-full bg-[#0B1020]/95 backdrop-blur-2xl border-b border-white/10 shadow-2xl overflow-hidden"
+            className="lg:hidden w-full bg-[#0B1020]/95 backdrop-blur-2xl border-b border-white/10 shadow-2xl overflow-hidden"
           >
             <div className="px-4 py-6 flex flex-col gap-3">
               {isAuthenticated && user && (
@@ -243,7 +244,7 @@ export default function Navbar() {
               )}
 
               <Link
-                to="/listings"
+                to="/"
                 className="flex items-center gap-3 p-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-white hover:bg-white/[0.06] transition-all"
               >
                 <Compass size={18} className="text-indigo-400" />

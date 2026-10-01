@@ -20,6 +20,7 @@ api.interceptors.response.use(
     if (err.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      window.dispatchEvent(new Event('campusswap:unauthorized'));
     }
     return Promise.reject(err);
   }

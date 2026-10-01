@@ -74,34 +74,12 @@ body {
   transform: translateY(-2px);
 }
 
-.glass-input {
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.75rem;
-  color: #f8fafc;
-  transition: all 0.2s ease;
-}
-
-.glass-input:focus {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
-}
-
 /* Gradient accents */
 .gradient-text {
   background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #e879f9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.gradient-brand {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-}
-
-.gradient-brand-hover:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
 }
 
 /* Button foundation classes */
@@ -200,15 +178,6 @@ select.input option {
   letter-spacing: 0.03em;
 }
 
-/* Glow blob background effect */
-.glow-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.18;
-  pointer-events: none;
-}
-
 /* Shimmer animation for skeletons */
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
@@ -234,4 +203,48 @@ select.input option {
     rgba(255, 255, 255, 0) 100%
   );
   animation: shimmer 1.8s infinite;
+}
+
+.hero-atmosphere::before {
+  content: '';
+  position: absolute;
+  inset: -35% -20%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  filter: blur(38px);
+  background:
+    linear-gradient(112deg, transparent 12%, rgba(99, 102, 241, 0.2) 34%, rgba(139, 92, 246, 0.16) 48%, transparent 72%),
+    linear-gradient(292deg, transparent 22%, rgba(20, 184, 166, 0.08) 42%, transparent 66%);
+  background-size: 180% 170%;
+  animation: atmosphere-drift 20s ease-in-out infinite alternate;
+}
+
+@keyframes atmosphere-drift {
+  from { background-position: 0% 40%, 100% 60%; transform: translate3d(-1%, 0, 0); }
+  to { background-position: 100% 60%, 0% 40%; transform: translate3d(1%, 1%, 0); }
+}
+
+:where(a, button, input, select, textarea, [role='button'], [tabindex]):focus-visible {
+  outline: 2px solid #a5b4fc;
+  outline-offset: 3px;
+}
+
+:where(button:not(:disabled), a) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-primary:active:not(:disabled),
+.btn-ghost:active:not(:disabled) {
+  transform: translateY(0) scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

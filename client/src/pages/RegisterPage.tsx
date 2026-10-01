@@ -79,10 +79,7 @@ export default function RegisterPage() {
         className="w-full max-w-5xl rounded-3xl overflow-hidden glass border border-white/10 shadow-2xl grid grid-cols-1 lg:grid-cols-12 min-h-[660px]"
       >
         {/* Left: Gradient Branding Panel */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-indigo-950 via-purple-950/70 to-[#0B1020] p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
-          {/* Ambient glow */}
-          <div className="glow-blob w-72 h-72 bg-purple-500/25 -top-20 -left-20" />
-          <div className="glow-blob w-60 h-60 bg-indigo-600/20 -bottom-20 -right-20" />
+        <div className="hero-atmosphere lg:col-span-5 bg-gradient-to-br from-indigo-950 via-purple-950/70 to-[#0B1020] p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
 
           {/* Top Brand Header */}
           <div className="relative z-10">

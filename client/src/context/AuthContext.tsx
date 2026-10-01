@@ -13,7 +13,7 @@ export interface RegisterPayload {
 export interface AuthContextValue {
   user: User | null;
   token: string | null;
-  login: (emailOrToken: string, passwordOrUser?: any) => Promise<User>;
+  login: (email: string, password: string) => Promise<User>;
   register: (payload: RegisterPayload) => Promise<User>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -34,7 +34,7 @@ function loadInitialUser(): User | null {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(loadInitialUser);
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => Boolean(localStorage.getItem('token')));
 
   // Validate token on initial app load
   useEffect(() => {
@@ -55,26 +55,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(null);
         })
         .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
     }
   }, []);
 
-  const login = useCallback(async (emailOrToken: string, passwordOrUser?: any): Promise<User> => {
-    // If called as login(token, user)
-    if (typeof passwordOrUser === 'object' && passwordOrUser !== null) {
-      const newToken = emailOrToken;
-      const newUser = passwordOrUser as User;
-      localStorage.setItem('token', newToken);
-      localStorage.setItem('user', JSON.stringify(newUser));
-      setToken(newToken);
-      setUser(newUser);
-      return newUser;
-    }
+  useEffect(() => {
+    const clearSession = () => {
+      setToken(null);
+      setUser(null);
+    };
+    window.addEventListener('campusswap:unauthorized', clearSession);
+    return () => window.removeEventListener('campusswap:unauthorized', clearSession);
+  }, []);
 
-    // Otherwise called as login(email, password)
-    const email = emailOrToken;
-    const password = passwordOrUser as string;
+  const login = useCallback(async (email: string, password: string): Promise<User> => {
     const res = await api.post('/auth/login', { email, password });
     const { token: newToken, user: loggedInUser } = res.data;
 

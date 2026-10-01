@@ -1,12 +1,23 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { PlusCircle, Edit3, CheckCircle2, ShoppingBag, Clock, Mail, Calendar, HelpCircle, Package, ArrowRight } from 'lucide-react';
+import { PlusCircle, Edit3, CheckCircle2, ShoppingBag, Clock, Mail, Calendar, HelpCircle, Package, ArrowRight, Trash2 } from 'lucide-react';
 import type { Listing, Transaction, RequestItem } from '../types';
 import { CATEGORY_META, MODE_META } from '../lib/constants';
 import api from '../lib/api';
 
-type Tab = 'listings' | 'transactions' | 'requests';
+type Tab = 'listings' | 'requests' | 'deals';
+
+function rentalDueBadge(dueDate: string): { label: string; className: string } {
+  const [year, month, day] = dueDate.slice(0, 10).split('-').map(Number);
+  const due = new Date(year, month - 1, day);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const days = Math.round((due.getTime() - today.getTime()) / 86400000);
+  if (days < 0) return { label: 'Overdue', className: 'text-red-300 bg-red-500/10 border-red-500/30' };
+  if (days === 0) return { label: 'Due today', className: 'text-amber-300 bg-amber-500/10 border-amber-500/30' };
+  return { label: `Due in ${days} ${days === 1 ? 'day' : 'days'}`, className: 'text-amber-300 bg-amber-500/10 border-amber-500/30' };
+}
 
 export default function MyListingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>('listings');
@@ -14,18 +25,26 @@ export default function MyListingsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [requests, setRequests] = useState<RequestItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const fetchAll = async () => {
-    setLoading(true);
+  const fetchAll = async (showLoading = false) => {
+    if (showLoading) {
+      setLoading(true);
+      setLoadError(false);
+    }
     try {
       const [listRes, txRes, reqRes] = await Promise.all([
-        api.get('/my/listings').catch(() => ({ data: { listings: [] } })),
-        api.get('/my/transactions').catch(() => ({ data: { transactions: [] } })),
-        api.get('/my/requests').catch(() => ({ data: { requests: [] } })),
+        api.get('/my/listings'),
+        api.get('/my/transactions'),
+        api.get('/my/requests'),
       ]);
       setListings(listRes.data.listings || []);
       setTransactions(txRes.data.transactions || []);
       setRequests(reqRes.data.requests || []);
+      setLoadError(false);
+    } catch {
+      setLoadError(true);
     } finally {
       setLoading(false);
     }
@@ -39,18 +58,22 @@ export default function MyListingsPage() {
     const nextStatus = currentStatus === 'available' ? 'sold' : 'available';
     try {
       await api.patch(`/listings/${id}/status`, { status: nextStatus });
-      fetchAll();
+      fetchAll(true);
     } catch (err: any) {
       alert(err.response?.data?.error ?? 'Failed to update status');
     }
   };
 
-  const handleFulfillRequest = async (id: number) => {
+  const handleDeleteListing = async (id: number) => {
+    if (!window.confirm('Delete this listing permanently?')) return;
+    setDeletingId(id);
     try {
-      await api.patch(`/requests/${id}/fulfill`);
-      fetchAll();
+      await api.delete(`/listings/${id}`);
+      await fetchAll(true);
     } catch (err: any) {
-      alert(err.response?.data?.error ?? 'Failed to fulfill request');
+      alert(err.response?.data?.error ?? 'Failed to delete listing');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -71,44 +94,54 @@ export default function MyListingsPage() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 p-1.5 glass rounded-2xl mb-8 border border-white/5 max-w-fit">
+        <div className="grid grid-cols-3 gap-1 p-1.5 glass rounded-2xl mb-8 border border-white/5 w-full sm:w-auto sm:max-w-fit">
           <button
             onClick={() => setActiveTab('listings')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`flex items-center justify-center gap-1.5 px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all ${
               activeTab === 'listings'
                 ? 'bg-indigo-600 text-white shadow-lg'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Package size={15} />
-            <span>My Listings ({listings.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('transactions')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'transactions'
-                ? 'bg-indigo-600 text-white shadow-lg'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <ShoppingBag size={15} />
-            <span>Claimed & Borrowed ({transactions.length})</span>
+            <span>My Listings</span>
           </button>
 
           <button
             onClick={() => setActiveTab('requests')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`flex items-center justify-center gap-1.5 px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all ${
               activeTab === 'requests'
                 ? 'bg-indigo-600 text-white shadow-lg'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <HelpCircle size={15} />
-            <span>My Requests ({requests.length})</span>
+            <span>My Requests</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('deals')}
+            className={`flex items-center justify-center gap-1.5 px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all ${
+              activeTab === 'deals'
+                ? 'bg-indigo-600 text-white shadow-lg'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <ShoppingBag size={15} />
+            <span>My Deals</span>
           </button>
         </div>
 
+        {loadError ? (
+          <div role="alert" className="glass p-10 text-center rounded-2xl border border-amber-400/20">
+            <p className="text-white font-bold">Activity couldn’t load</p>
+            <p className="text-slate-400 text-sm mt-1 mb-4">Check your connection and retry.</p>
+            <button type="button" onClick={() => fetchAll(true)} className="btn-ghost text-xs mx-auto">
+              <Clock size={14} /> Retry
+            </button>
+          </div>
+        ) : (
+        <>
         {/* Tab 1: My Listings */}
         {activeTab === 'listings' && (
           <div>
@@ -168,7 +201,7 @@ export default function MyListingsPage() {
                               </span>
                             )}
                           </div>
-                          <Link to={`/listings/${item.id}`} className="text-white font-bold hover:text-indigo-300 transition-colors text-base block">
+                          <Link to={`/listing/${item.id}`} className="text-white font-bold hover:text-indigo-300 transition-colors text-base block">
                             {item.title}
                           </Link>
                           <p className="text-slate-400 text-xs mt-0.5">
@@ -179,22 +212,39 @@ export default function MyListingsPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 self-end sm:self-center">
-                        <button
-                          onClick={() => handleToggleStatus(item.id, item.status)}
-                          className={`btn-ghost text-xs py-1.5 px-3 ${
-                            isAvailable
-                              ? 'text-amber-400 border-amber-500/30 hover:border-amber-500'
-                              : 'text-emerald-400 border-emerald-500/30 hover:border-emerald-500'
-                          }`}
-                        >
-                          <CheckCircle2 size={13} />
-                          {isAvailable ? 'Mark Sold' : 'Mark Available'}
-                        </button>
+                      <div className="flex flex-wrap items-center justify-end gap-2 self-end sm:self-center">
+                        {isAvailable || !item.has_transactions || item.status === 'closed' ? (
+                          <button
+                            onClick={() => handleToggleStatus(item.id, item.status)}
+                            className={`btn-ghost text-xs py-1.5 px-3 ${
+                              isAvailable
+                                ? 'text-amber-400 border-amber-500/30 hover:border-amber-500'
+                                : 'text-emerald-400 border-emerald-500/30 hover:border-emerald-500'
+                            }`}
+                          >
+                            <CheckCircle2 size={13} />
+                            {isAvailable ? 'Mark Sold' : 'Mark Available'}
+                          </button>
+                        ) : (
+                          <span className="badge text-[10px] uppercase bg-white/5 text-slate-400">{item.status}</span>
+                        )}
 
-                        <Link to={`/listings/${item.id}/edit`} className="btn-ghost text-xs py-1.5 px-3">
-                          <Edit3 size={13} /> Edit
-                        </Link>
+                        {!item.has_transactions && (
+                          <>
+                            <Link to={`/listings/${item.id}/edit`} className="btn-ghost text-xs py-1.5 px-3">
+                              <Edit3 size={13} /> Edit
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteListing(item.id)}
+                              disabled={deletingId === item.id}
+                              className="btn-ghost text-xs py-1.5 px-3 text-red-300 border-red-500/25 hover:border-red-500 disabled:opacity-50"
+                              aria-label={`Delete ${item.title}`}
+                            >
+                              <Trash2 size={13} /> {deletingId === item.id ? 'Deleting…' : 'Delete'}
+                            </button>
+                          </>
+                        )}
                       </div>
                     </motion.div>
                   );
@@ -204,8 +254,43 @@ export default function MyListingsPage() {
           </div>
         )}
 
-        {/* Tab 2: My Transactions */}
-        {activeTab === 'transactions' && (
+        {/* Tab 2: My Requests */}
+        {activeTab === 'requests' && (
+          <div>
+            {loading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map(i => <div key={i} className="glass h-24 animate-pulse rounded-2xl" />)}
+              </div>
+            ) : requests.length === 0 ? (
+              <div className="text-center py-20 glass rounded-2xl">
+                <span className="text-5xl mb-4 block">🙋</span>
+                <p className="text-lg font-semibold text-white">No requests posted</p>
+                <p className="text-slate-400 text-sm mb-6 mt-1">Your resource requests will appear here.</p>
+                <Link to="/requests" className="btn-primary text-xs mx-auto">Open Request Board</Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {requests.map(req => (
+                  <motion.div key={req.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass p-5 rounded-2xl border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        {req.course && <span className="badge text-[10px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300">{req.course}</span>}
+                        {req.semester && <span className="badge text-[10px] px-2 py-0.5 bg-white/5 text-slate-300">{req.semester}</span>}
+                        <span className={`badge text-[10px] px-2 py-0.5 uppercase ${req.status === 'open' ? 'bg-amber-500/10 text-amber-300' : 'bg-emerald-500/10 text-emerald-300'}`}>{req.status}</span>
+                      </div>
+                      <h3 className="text-white font-bold">{req.title}</h3>
+                      {req.note && <p className="text-slate-400 text-sm mt-1">{req.note}</p>}
+                    </div>
+                    <span className="text-xs text-slate-500">{new Date(req.created_at).toLocaleDateString()}</span>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab 3: My Deals */}
+        {activeTab === 'deals' && (
           <div>
             {loading ? (
               <div className="space-y-4">
@@ -218,7 +303,7 @@ export default function MyListingsPage() {
                 <span className="text-5xl mb-4 block">🛍️</span>
                 <p className="text-lg font-semibold text-white">No items claimed yet</p>
                 <p className="text-slate-400 text-sm mb-6 mt-1">Browse campus listings to buy, rent, or swap academic materials.</p>
-                <Link to="/listings" className="btn-primary text-xs mx-auto">
+                <Link to="/" className="btn-primary text-xs mx-auto">
                   Browse Resources
                 </Link>
               </div>
@@ -251,19 +336,19 @@ export default function MyListingsPage() {
                           Seller: <strong className="text-slate-200">{tx.seller_name || 'Campus Peer'}</strong>
                         </span>
                         {tx.seller_email && (
-                          <span className="flex items-center gap-1 text-indigo-300">
+                          <a href={`mailto:${tx.seller_email}`} className="flex items-center gap-1 text-indigo-300 hover:text-indigo-200">
                             <Mail size={12} /> {tx.seller_email}
-                          </span>
+                          </a>
                         )}
                         {tx.due_date && (
-                          <span className="flex items-center gap-1 text-amber-400 font-medium bg-amber-950/40 px-2 py-0.5 rounded border border-amber-500/30">
-                            <Calendar size={12} /> Return Due: {new Date(tx.due_date).toLocaleDateString()}
+                          <span className={`flex items-center gap-1 font-medium px-2 py-0.5 rounded border ${rentalDueBadge(tx.due_date).className}`}>
+                            <Calendar size={12} /> {rentalDueBadge(tx.due_date).label} · Return {new Date(`${tx.due_date}T00:00:00`).toLocaleDateString()}
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <Link to={`/listings/${tx.listing_id}`} className="btn-ghost text-xs py-1.5 px-3.5 self-end sm:self-center flex items-center gap-1">
+                    <Link to={`/listing/${tx.listing_id}`} className="btn-ghost text-xs py-1.5 px-3.5 self-end sm:self-center flex items-center gap-1">
                       View Item <ArrowRight size={13} />
                     </Link>
                   </motion.div>
@@ -272,74 +357,7 @@ export default function MyListingsPage() {
             )}
           </div>
         )}
-
-        {/* Tab 3: My Requests */}
-        {activeTab === 'requests' && (
-          <div>
-            {loading ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="glass h-24 animate-pulse rounded-2xl" />
-                ))}
-              </div>
-            ) : requests.length === 0 ? (
-              <div className="text-center py-20 glass rounded-2xl">
-                <span className="text-5xl mb-4 block">🙋‍♂️</span>
-                <p className="text-lg font-semibold text-white">No requests posted</p>
-                <p className="text-slate-400 text-sm mb-6 mt-1">Need a specific textbook or calculator? Post a request!</p>
-                <Link to="/requests" className="btn-primary text-xs mx-auto">
-                  Go to Request Board
-                </Link>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {requests.map(req => {
-                  const isOpen = req.status === 'open';
-                  return (
-                    <motion.div
-                      key={req.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="glass p-5 rounded-2xl border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                    >
-                      <div>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          {req.course && (
-                            <span className="badge text-[10px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300 font-semibold border border-indigo-500/30">
-                              {req.course}
-                            </span>
-                          )}
-                          <span
-                            className={`badge text-[10px] px-2 py-0.5 font-bold uppercase tracking-wider ${
-                              isOpen
-                                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                                : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                            }`}
-                          >
-                            {req.status}
-                          </span>
-                          <span className="text-[11px] text-slate-500">
-                            {new Date(req.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <h3 className="text-white font-bold text-base">{req.title}</h3>
-                        {req.note && <p className="text-slate-400 text-xs mt-1">"{req.note}"</p>}
-                      </div>
-
-                      {isOpen && (
-                        <button
-                          onClick={() => handleFulfillRequest(req.id)}
-                          className="btn-ghost text-xs py-1.5 px-3 text-emerald-400 border-emerald-500/30 hover:border-emerald-500 self-end sm:self-center"
-                        >
-                          <CheckCircle2 size={13} /> Mark Fulfilled
-                        </button>
-                      )}
-                    </motion.div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+        </>
         )}
       </div>
     </div>

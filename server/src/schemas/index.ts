@@ -51,7 +51,6 @@ export const ListingUpdateSchema = z.object({
   price:               z.number().nonnegative().optional().nullable(),
   rent_price_per_week: z.number().nonnegative().optional().nullable(),
   swap_wanted:         z.string().max(200).optional().nullable(),
-  status:              z.enum(['available', 'sold', 'rented', 'swapped', 'closed']).optional(),
 });
 
 // ── Requests ──────────────────────────────────────────────────────────────────

@@ -72,15 +72,19 @@ export function createTransaction(req: AuthRequest, res: Response): void {
       VALUES (?, ?, ?, ?, 'pending', ?)
     `).run(listingId, buyerId, listing.seller_id, type, due_date);
 
-    const transaction = db.prepare('SELECT * FROM transactions WHERE id = ?')
-      .get(info.lastInsertRowid) as TransactionRow;
+    const transaction = db.prepare(`
+      SELECT t.*, u.email AS seller_email, u.name AS seller_name
+      FROM transactions t
+      JOIN users u ON u.id = t.seller_id
+      WHERE t.id = ?
+    `).get(info.lastInsertRowid) as TransactionRow;
 
     db.exec('COMMIT');
     created(res, { transaction });
   } catch (err: unknown) {
     try { db.exec('ROLLBACK'); } catch { /* ignore rollback errors */ }
-    const e = err as Error;
-    ok(res, { error: e.message || 'Internal server error' }, 500);
+    console.error('Failed to create transaction:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
 

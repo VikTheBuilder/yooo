@@ -40,7 +40,16 @@ router.post('/register', (req, res: Response) => {
     return res.status(400).json({ error: messages[0], errors: messages });
   }
 
-  const { name, email, password, hostel, batch } = result.data;
+  const { name, password, hostel, batch } = result.data;
+  const email = result.data.email.trim().toLowerCase();
+  const allowedDomains = (process.env.CAMPUS_EMAIL_DOMAINS ?? 'campus.edu')
+    .split(',')
+    .map(domain => domain.trim().toLowerCase())
+    .filter(Boolean);
+  const emailDomain = email.split('@').pop();
+  if (!emailDomain || !allowedDomains.includes(emailDomain)) {
+    return res.status(403).json({ error: 'Use an approved campus email address to register' });
+  }
 
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
   if (existing) {
@@ -70,7 +79,8 @@ router.post('/login', (req, res: Response) => {
     return res.status(400).json({ error: messages[0], errors: messages });
   }
 
-  const { email, password } = result.data;
+  const { password } = result.data;
+  const email = result.data.email.trim().toLowerCase();
 
   const user = db
     .prepare('SELECT * FROM users WHERE email = ?')

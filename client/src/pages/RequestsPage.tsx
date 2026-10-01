@@ -1,16 +1,29 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, CheckCircle2, Clock, MapPin, AlertCircle, HelpCircle, Send } from 'lucide-react';
+import { Plus, CheckCircle2, Clock, MapPin, AlertCircle, HelpCircle, Send, RefreshCw } from 'lucide-react';
 import type { RequestItem } from '../types';
 import { SEMESTER_OPTIONS } from '../lib/constants';
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/api';
 
+function contactRequesterHref(request: RequestItem): string {
+  const subject = encodeURIComponent(`I can help with: ${request.title}`);
+  const course = request.course ? ` (${request.course})` : '';
+  const body = encodeURIComponent(
+    `Hi ${request.user_name || 'there'},\n\nI saw your request for ${request.title}${course} and I have this resource. Let me know if you would like to arrange a campus handover.\n\n`,
+  );
+  return `mailto:${request.user_email}?subject=${subject}&body=${body}`;
+}
+
 export default function RequestsPage() {
   const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const [requests, setRequests] = useState<RequestItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [listError, setListError] = useState(false);
+  const [now, setNow] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
   // New Request Form
@@ -22,14 +35,39 @@ export default function RequestsPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [titleError, setTitleError] = useState('');
 
-  const fetchRequests = async () => {
-    setLoading(true);
+  const timeAgo = (value: string) => {
+    const minutes = Math.max(0, Math.floor((now - new Date(value).getTime()) / 60000));
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days}d ago`;
+    return new Date(value).toLocaleDateString();
+  };
+
+  const openRequestModal = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    setTitleError('');
+    setError('');
+    setShowModal(true);
+  };
+
+  const fetchRequests = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const res = await api.get('/requests');
       setRequests(res.data.requests || []);
+      setNow(Date.now());
+      setListError(false);
     } catch {
       setRequests([]);
+      setListError(true);
     } finally {
       setLoading(false);
     }
@@ -41,7 +79,16 @@ export default function RequestsPage() {
 
   const handleCreateRequest = async (e: FormEvent) => {
     e.preventDefault();
-    if (!form.title.trim()) return;
+    const title = form.title.trim();
+    if (title.length < 3 || title.length > 120) {
+      setTitleError(title.length < 3 ? 'Enter at least 3 characters.' : 'Use 120 characters or fewer.');
+      return;
+    }
+    if (form.course.length > 60 || form.note.length > 500) {
+      setError('Course must be 60 characters or fewer and notes 500 characters or fewer.');
+      return;
+    }
+    setTitleError('');
     setSubmitting(true);
     setError('');
 
@@ -54,7 +101,7 @@ export default function RequestsPage() {
       });
       setForm({ title: '', course: '', semester: 'Semester 1', note: '' });
       setShowModal(false);
-      fetchRequests();
+      await fetchRequests(true);
     } catch (err: any) {
       setError(err.response?.data?.error ?? 'Failed to submit request');
     } finally {
@@ -65,7 +112,7 @@ export default function RequestsPage() {
   const handleFulfill = async (id: number) => {
     try {
       await api.patch(`/requests/${id}/fulfill`);
-      fetchRequests();
+      fetchRequests(true);
     } catch (err: any) {
       alert(err.response?.data?.error ?? 'Failed to mark fulfilled');
     }
@@ -84,13 +131,7 @@ export default function RequestsPage() {
           </div>
 
           <button
-            onClick={() => {
-              if (!isAuthenticated) {
-                window.location.href = '/login';
-                return;
-              }
-              setShowModal(true);
-            }}
+            onClick={openRequestModal}
             className="btn-primary flex items-center gap-2 self-start sm:self-auto py-2.5 px-4 shadow-lg text-sm"
           >
             <Plus size={16} /> Post a Request
@@ -114,6 +155,7 @@ export default function RequestsPage() {
                   </h2>
                   <button
                     onClick={() => setShowModal(false)}
+                    aria-label="Close request form"
                     className="text-slate-400 hover:text-white text-lg font-bold"
                   >
                     ✕
@@ -136,9 +178,17 @@ export default function RequestsPage() {
                       className="input text-sm"
                       placeholder="e.g. Casio fx-991EX Calculator or Sedra & Smith Microelectronics"
                       value={form.title}
-                      onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+                      maxLength={120}
+                      onChange={e => {
+                        setForm(f => ({ ...f, title: e.target.value }));
+                        if (e.target.value.trim().length >= 3) setTitleError('');
+                      }}
+                      onBlur={() => {
+                        if (form.title.trim().length < 3) setTitleError('Enter at least 3 characters.');
+                      }}
                       required
                     />
+                    {titleError && <p className="text-xs text-red-400 mt-1">{titleError}</p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -150,6 +200,7 @@ export default function RequestsPage() {
                         className="input text-sm"
                         placeholder="e.g. CS201, EE102"
                         value={form.course}
+                        maxLength={60}
                         onChange={e => setForm(f => ({ ...f, course: e.target.value }))}
                       />
                     </div>
@@ -176,6 +227,7 @@ export default function RequestsPage() {
                     <textarea
                       className="input text-sm resize-none"
                       rows={3}
+                      maxLength={500}
                       placeholder="e.g. Need for mid-term prep this week, happy to pay weekly rent or buy!"
                       value={form.note}
                       onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
@@ -212,12 +264,21 @@ export default function RequestsPage() {
               <div key={i} className="glass h-28 animate-pulse rounded-2xl" />
             ))}
           </div>
+        ) : listError ? (
+          <div role="alert" className="glass p-10 text-center rounded-2xl max-w-md mx-auto">
+            <AlertCircle size={24} className="mx-auto mb-3 text-amber-300" />
+            <h3 className="text-white font-bold text-lg">Requests couldn’t load</h3>
+            <p className="text-slate-400 text-sm mt-1 mb-4">Check the server connection and try again.</p>
+            <button type="button" onClick={() => fetchRequests(true)} className="btn-ghost text-xs mx-auto">
+              <RefreshCw size={14} /> Retry
+            </button>
+          </div>
         ) : requests.length === 0 ? (
           <div className="glass p-12 text-center rounded-2xl max-w-md mx-auto">
             <span className="text-4xl mb-3 block">🙋‍♂️</span>
             <h3 className="text-white font-bold text-lg mb-1">No active requests</h3>
             <p className="text-slate-400 text-sm mb-4">Be the first to post a request for books, equipment, or notes!</p>
-            <button onClick={() => setShowModal(true)} className="btn-primary text-xs mx-auto">
+            <button onClick={openRequestModal} className="btn-primary text-xs mx-auto">
               Post Request
             </button>
           </div>
@@ -260,7 +321,7 @@ export default function RequestsPage() {
 
                       <span className="text-[11px] text-slate-500 flex items-center gap-1 shrink-0">
                         <Clock size={11} />
-                        {new Date(req.created_at).toLocaleDateString()}
+                        {timeAgo(req.created_at)}
                       </span>
                     </div>
 
@@ -298,6 +359,11 @@ export default function RequestsPage() {
                       >
                         <CheckCircle2 size={13} /> Mark Fulfilled
                       </button>
+                    )}
+                    {!isOwner && isOpen && req.user_email && (
+                      <a href={contactRequesterHref(req)} className="btn-primary text-xs py-1.5 px-3 shrink-0">
+                        <Send size={13} /> I have this
+                      </a>
                     )}
                   </div>
                 </motion.div>

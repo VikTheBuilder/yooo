@@ -2,7 +2,7 @@ import { Response } from 'express';
 import db from '../db/database';
 import { ListingSchema, ListingUpdateSchema } from '../schemas';
 import { AuthRequest } from '../middleware/auth';
-import { ok, created, badRequest, forbidden, notFound, parseZodError } from '../lib/response';
+import { ok, created, badRequest, forbidden, notFound, conflict, parseZodError } from '../lib/response';
 
 // ── Row type ──────────────────────────────────────────────────────────────────
 
@@ -24,12 +24,14 @@ export type ListingRow = {
   seller_name?: string;
   seller_hostel?: string;
   seller_batch?: string;
+  has_transactions?: number;
 };
 
 // ── Shared SQL fragment ───────────────────────────────────────────────────────
 
 const SELECT_WITH_SELLER = `
-  SELECT l.*, u.name AS seller_name, u.hostel AS seller_hostel, u.batch AS seller_batch
+  SELECT l.*, u.name AS seller_name, u.hostel AS seller_hostel, u.batch AS seller_batch,
+         EXISTS(SELECT 1 FROM transactions t WHERE t.listing_id = l.id) AS has_transactions
   FROM listings l
   JOIN users u ON u.id = l.seller_id
 `;
@@ -50,8 +52,10 @@ export function getListings(req: AuthRequest, res: Response): void {
   if (semester)  { sql += ' AND l.semester = ?';    params.push(semester); }
   if (mode)      { sql += ' AND l.mode = ?';        params.push(mode); }
   if (maxPrice)  {
-    const p = parseFloat(maxPrice);
-    if (!isNaN(p)) { sql += ' AND l.price <= ?'; params.push(p); }
+    const p = Number(maxPrice);
+    if (!Number.isFinite(p) || p < 0) { badRequest(res, 'maxPrice must be a non-negative number'); return; }
+    sql += ' AND l.price <= ?';
+    params.push(p);
   }
 
   const ORDER: Record<string, string> = {
@@ -106,6 +110,8 @@ export function updateListing(req: AuthRequest, res: Response): void {
   const existing = db.prepare('SELECT * FROM listings WHERE id = ?').get(req.params.id) as ListingRow | undefined;
   if (!existing) { notFound(res, 'Listing not found'); return; }
   if (existing.seller_id !== req.userId) { forbidden(res); return; }
+  const transaction = db.prepare('SELECT id FROM transactions WHERE listing_id = ? LIMIT 1').get(req.params.id);
+  if (transaction) { conflict(res, 'Listings with deal history cannot be edited'); return; }
 
   const parsed = ListingUpdateSchema.safeParse(req.body);
   if (!parsed.success) { badRequest(res, ...Object.values(parseZodError(parsed.error)) as [string, string[]]); return; }
@@ -129,9 +135,16 @@ export function patchListingStatus(req: AuthRequest, res: Response): void {
   if (existing.seller_id !== req.userId) { forbidden(res); return; }
 
   const VALID = ['available', 'sold', 'rented', 'swapped', 'closed'];
-  const { status } = req.body as { status?: string };
+  const status = req.body && typeof req.body === 'object'
+    ? (req.body as { status?: string }).status
+    : undefined;
   if (!status || !VALID.includes(status)) {
     badRequest(res, `status must be one of: ${VALID.join(', ')}`); return;
+  }
+
+  if (status === 'available' && ['sold', 'rented', 'swapped'].includes(existing.status)) {
+    const transaction = db.prepare('SELECT id FROM transactions WHERE listing_id = ? LIMIT 1').get(req.params.id);
+    if (transaction) { conflict(res, 'A listing with transaction history cannot be relisted'); return; }
   }
 
   db.prepare('UPDATE listings SET status = ? WHERE id = ?').run(status, req.params.id);
@@ -144,6 +157,9 @@ export function deleteListing(req: AuthRequest, res: Response): void {
   const existing = db.prepare('SELECT * FROM listings WHERE id = ?').get(req.params.id) as ListingRow | undefined;
   if (!existing) { notFound(res, 'Listing not found'); return; }
   if (existing.seller_id !== req.userId) { forbidden(res); return; }
+
+  const transaction = db.prepare('SELECT id FROM transactions WHERE listing_id = ? LIMIT 1').get(req.params.id);
+  if (transaction) { conflict(res, 'Listings with deal history cannot be deleted'); return; }
 
   db.prepare('DELETE FROM listings WHERE id = ?').run(req.params.id);
   ok(res, { message: 'Listing deleted' });
