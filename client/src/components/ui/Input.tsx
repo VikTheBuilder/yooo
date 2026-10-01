@@ -30,7 +30,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-xs font-semibold text-slate-300 uppercase tracking-wider"
+            className="text-xs font-black text-black uppercase tracking-widest"
           >
             {label}
           </label>
@@ -38,7 +38,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
         <div className="relative flex items-center">
           {leftIcon && (
-            <div className="absolute left-3.5 text-slate-400 pointer-events-none flex items-center justify-center">
+            <div className="absolute left-3.5 text-black/50 pointer-events-none flex items-center justify-center">
               {leftIcon}
             </div>
           )}
@@ -47,27 +47,27 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             ref={ref}
             disabled={disabled}
-            className={`w-full bg-white/[0.04] text-slate-100 placeholder:text-slate-500 text-sm rounded-xl px-4 py-2.5 border transition-all duration-200 outline-none ${
+            className={`w-full bg-white text-black placeholder:text-black/40 text-sm px-4 py-2.5 border-[3px] outline-none shadow-[4px_4px_0_0_#000] focus:shadow-[6px_6px_0_0_#000] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all duration-100 ${
               leftIcon ? 'pl-10' : ''
             } ${rightIcon ? 'pr-10' : ''} ${
               error
-                ? 'border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
-                : 'border-white/10 hover:border-white/20 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-            } ${disabled ? 'opacity-50 cursor-not-allowed bg-white/[0.02]' : ''} ${className}`}
+                ? 'border-[#FF6B9D]'
+                : 'border-black'
+            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
             {...props}
           />
 
           {rightIcon && (
-            <div className="absolute right-3.5 text-slate-400 flex items-center justify-center">
+            <div className="absolute right-3.5 text-black/50 flex items-center justify-center">
               {rightIcon}
             </div>
           )}
         </div>
 
         {error ? (
-          <p className="text-xs text-red-400 font-medium tracking-tight mt-0.5">{error}</p>
+          <p className="text-xs font-bold text-[#FF6B9D] mt-0.5 uppercase tracking-wide">{error}</p>
         ) : helperText ? (
-          <p className="text-xs text-slate-400 mt-0.5">{helperText}</p>
+          <p className="text-xs text-black/60 mt-0.5 font-medium">{helperText}</p>
         ) : null}
       </div>
     );

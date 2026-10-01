@@ -35,7 +35,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="text-xs font-semibold text-slate-300 uppercase tracking-wider"
+            className="text-xs font-black text-black uppercase tracking-widest"
           >
             {label}
           </label>
@@ -46,31 +46,29 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             id={selectId}
             ref={ref}
             disabled={disabled}
-            className={`w-full appearance-none bg-white/[0.04] text-slate-100 text-sm rounded-xl px-4 py-2.5 pr-10 border transition-all duration-200 outline-none cursor-pointer ${
-              error
-                ? 'border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
-                : 'border-white/10 hover:border-white/20 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-            } ${disabled ? 'opacity-50 cursor-not-allowed bg-white/[0.02]' : ''} ${className}`}
+            className={`w-full appearance-none bg-white text-black text-sm px-4 py-2.5 pr-10 border-[3px] outline-none cursor-pointer shadow-[4px_4px_0_0_#000] focus:shadow-[6px_6px_0_0_#000] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all duration-100 font-medium ${
+              error ? 'border-[#FF6B9D]' : 'border-black'
+            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
             {...props}
           >
             {options
               ? options.map((opt) => (
-                  <option key={opt.value} value={opt.value} className="bg-[#0f172a] text-slate-200 py-1">
+                  <option key={opt.value} value={opt.value} className="bg-white text-black py-1">
                     {opt.label}
                   </option>
                 ))
               : children}
           </select>
 
-          <div className="absolute right-3.5 text-slate-400 pointer-events-none flex items-center justify-center">
-            <ChevronDown size={16} />
+          <div className="absolute right-3.5 text-black pointer-events-none flex items-center justify-center">
+            <ChevronDown size={16} strokeWidth={3} />
           </div>
         </div>
 
         {error ? (
-          <p className="text-xs text-red-400 font-medium tracking-tight mt-0.5">{error}</p>
+          <p className="text-xs font-bold text-[#FF6B9D] mt-0.5 uppercase tracking-wide">{error}</p>
         ) : helperText ? (
-          <p className="text-xs text-slate-400 mt-0.5">{helperText}</p>
+          <p className="text-xs text-black/60 mt-0.5 font-medium">{helperText}</p>
         ) : null}
       </div>
     );

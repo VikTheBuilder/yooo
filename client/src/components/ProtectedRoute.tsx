@@ -13,9 +13,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3">
-        <Loader2 className="animate-spin text-indigo-400" size={32} />
-        <p className="text-slate-400 text-xs font-medium tracking-wide">Checking authentication...</p>
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3 bg-[#FFF8E7]">
+        <Loader2 className="animate-spin text-black" size={32} />
+        <p className="text-black/60 text-xs font-black tracking-widest uppercase font-mono">Checking authentication...</p>
       </div>
     );
   }

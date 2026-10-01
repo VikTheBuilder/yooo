@@ -9,6 +9,7 @@ import api from '../lib/api';
 const CATEGORIES = Object.keys(CATEGORY_META) as ListingCategory[];
 const MODES = Object.keys(MODE_META) as ListingMode[];
 const CONDITIONS = Object.keys(CONDITION_LABELS) as ListingCondition[];
+
 export default function EditListingPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -83,35 +84,34 @@ export default function EditListingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-slate-400 animate-pulse">Loading listing details…</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#FFF8E7]">
+        <div className="text-black/50 font-bold uppercase animate-pulse font-mono text-sm">Loading listing details…</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen py-10 px-4">
+    <div className="min-h-screen py-10 px-4 bg-[#FFF8E7]">
       <div className="max-w-2xl mx-auto">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors text-sm"
+          className="flex items-center gap-2 text-black/60 hover:text-black mb-6 transition-colors text-sm font-bold uppercase cursor-pointer"
         >
           <ArrowLeft size={16} /> Back
         </button>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-white mb-1">Edit Listing</h1>
-            <p className="text-slate-400 text-sm">Update the details students see on your listing.</p>
+            <h1 className="text-3xl font-black text-black uppercase tracking-tight mb-1">Edit Listing</h1>
+            <p className="text-black/60 text-sm font-medium normal-case">Update the details students see on your listing.</p>
           </div>
 
-          <div className="glass p-8">
+          <div className="bg-white border-[3px] border-black shadow-[6px_6px_0_0_#000] p-8">
             {error && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="flex items-center gap-2 text-red-400 text-sm mb-6 p-3 rounded-lg"
-                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+                className="flex items-center gap-2 text-black text-sm mb-6 p-3 bg-[#FF6B9D] border-[3px] border-black font-bold uppercase"
               >
                 <AlertCircle size={15} />
                 {error}
@@ -121,7 +121,7 @@ export default function EditListingPage() {
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               {/* Title */}
               <div>
-                <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Title</label>
+                <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Title</label>
                 <input
                   className="input"
                   name="title"
@@ -134,7 +134,7 @@ export default function EditListingPage() {
               {/* Category + Mode */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Category</label>
+                  <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Category</label>
                   <select className="input" name="category" value={form.category} onChange={handleChange}>
                     {CATEGORIES.map(c => (
                       <option key={c} value={c}>{CATEGORY_META[c].emoji} {CATEGORY_META[c].label}</option>
@@ -142,7 +142,7 @@ export default function EditListingPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Mode</label>
+                  <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Mode</label>
                   <select className="input" name="mode" value={form.mode} onChange={handleChange}>
                     {MODES.map(m => (
                       <option key={m} value={m}>{MODE_META[m].label}</option>
@@ -154,7 +154,7 @@ export default function EditListingPage() {
               {/* Course + Semester */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Course Code</label>
+                  <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Course Code</label>
                   <input
                     className="input"
                     name="course"
@@ -163,7 +163,7 @@ export default function EditListingPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Semester</label>
+                  <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Semester</label>
                   <select className="input" name="semester" value={form.semester} onChange={handleChange}>
                     {SEMESTER_OPTIONS.map(s => (
                       <option key={s} value={s}>{s}</option>
@@ -174,7 +174,7 @@ export default function EditListingPage() {
 
               {/* Condition */}
               <div>
-                <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Condition</label>
+                <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Condition</label>
                 <select className="input" name="condition" value={form.condition} onChange={handleChange}>
                   {CONDITIONS.map(c => (
                     <option key={c} value={c}>{CONDITION_LABELS[c]}</option>
@@ -182,10 +182,9 @@ export default function EditListingPage() {
                 </select>
               </div>
 
-              {/* Price / Rent / Swap based on mode */}
               {form.mode === 'sell' && (
                 <div>
-                  <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Selling Price (₹)</label>
+                  <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Selling Price (₹)</label>
                   <input
                     className="input"
                     type="number"
@@ -198,7 +197,7 @@ export default function EditListingPage() {
 
               {form.mode === 'rent' && (
                 <div>
-                  <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Rent Price / Week (₹)</label>
+                  <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Rent Price / Week (₹)</label>
                   <input
                     className="input"
                     type="number"
@@ -211,7 +210,7 @@ export default function EditListingPage() {
 
               {form.mode === 'swap' && (
                 <div>
-                  <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Item Wanted in Swap</label>
+                  <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Item Wanted in Swap</label>
                   <input
                     className="input"
                     name="swap_wanted"
@@ -223,7 +222,7 @@ export default function EditListingPage() {
 
               {/* Description */}
               <div>
-                <label className="block text-slate-400 text-xs font-semibold mb-1.5 uppercase tracking-wide">Description</label>
+                <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">Description</label>
                 <textarea
                   className="input resize-none"
                   name="description"
@@ -234,7 +233,7 @@ export default function EditListingPage() {
                 />
               </div>
 
-              <button type="submit" disabled={saving} className="btn-primary w-full justify-center mt-2 py-3 text-base">
+              <button type="submit" disabled={saving} className="btn-primary w-full justify-center mt-2 py-3 text-base inline-flex items-center gap-2">
                 <Save size={18} />
                 {saving ? 'Saving changes…' : 'Save Changes'}
               </button>

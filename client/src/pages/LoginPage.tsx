@@ -7,7 +7,6 @@ import {
   EyeOff,
   Zap,
   ShieldCheck,
-  Sparkles,
   ArrowRight,
   GraduationCap,
   TrendingDown
@@ -62,90 +61,76 @@ export default function LoginPage() {
   return (
     <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="w-full max-w-5xl rounded-3xl overflow-hidden glass border border-white/10 shadow-2xl grid grid-cols-1 lg:grid-cols-12 min-h-[620px]"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.22 }}
+        className="w-full max-w-5xl border-[3px] border-black shadow-[6px_6px_0_0_#000] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[620px]"
       >
-        {/* Left: Gradient Branding Panel */}
-        <div className="hero-atmosphere lg:col-span-5 bg-gradient-to-br from-indigo-900/80 via-indigo-950/70 to-[#0B1020] p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
+        {/* Left: Branding Panel */}
+        <div className="lg:col-span-5 bg-[#4D7CFF] p-8 sm:p-10 flex flex-col justify-between border-b-[3px] lg:border-b-0 lg:border-r-[3px] border-black">
 
           {/* Top Brand Header */}
-          <div className="relative z-10">
+          <div>
             <Link to="/" className="inline-flex items-center gap-2.5 mb-8 group">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+              <div className="w-10 h-10 bg-black flex items-center justify-center text-[#FFE600] border-[2px] border-black shadow-[2px_2px_0_0_#000] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[4px_4px_0_0_#000] transition-all duration-100">
                 <BookOpen size={20} />
               </div>
-              <span className="font-extrabold text-xl text-white tracking-tight">
-                Campus<span className="gradient-text font-black">Swap</span>
+              <span className="font-black text-xl text-black tracking-tight uppercase">
+                CampusSwap
               </span>
             </Link>
 
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider text-indigo-300 bg-indigo-500/15 border border-indigo-500/25 mb-4">
-              <Sparkles size={12} /> Student Marketplace
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-black bg-[#FFE600] border-[2px] border-black shadow-[2px_2px_0_0_#000] mb-5 font-mono">
+              🎓 Student Marketplace
             </span>
 
-            <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight mb-4">
+            <h2 className="text-2xl sm:text-3xl font-black text-black leading-tight mb-4 uppercase">
               Welcome back to your campus hub.
             </h2>
-            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-6">
+            <p className="text-black/70 text-sm leading-relaxed mb-6 font-medium normal-case tracking-normal">
               Connect with fellow students, pick up calculators for exams, or sell your past semester books in minutes.
             </p>
           </div>
 
-          {/* Middle: Perks list */}
-          <div className="relative z-10 flex flex-col gap-3.5 my-6">
-            <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
-              <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0">
-                <Zap size={16} />
+          {/* Perks list */}
+          <div className="flex flex-col gap-3 my-4">
+            {[
+              { icon: <Zap size={16} />, title: 'Hostel-to-Hostel Handover', sub: 'Zero courier fees, meet in campus quads', bg: '#FFE600' },
+              { icon: <TrendingDown size={16} />, title: 'Save Up to 70%', sub: 'Direct peer-to-peer textbooks and equipment', bg: '#00D26A' },
+              { icon: <ShieldCheck size={16} />, title: 'Verified Peer Profiles', sub: 'Hostel room and batch visibility on every listing', bg: '#FF6B9D' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 bg-white border-[2px] border-black shadow-[2px_2px_0_0_#000]">
+                <div className="w-8 h-8 flex items-center justify-center shrink-0 border-[2px] border-black" style={{ backgroundColor: item.bg }}>
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="text-xs font-black text-black uppercase">{item.title}</p>
+                  <p className="text-[11px] text-black/60 font-medium normal-case">{item.sub}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs font-bold text-white">Hostel-to-Hostel Handover</p>
-                <p className="text-[11px] text-slate-400">Zero courier fees, meet in campus quads</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
-              <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
-                <TrendingDown size={16} />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">Save Up to 70%</p>
-                <p className="text-[11px] text-slate-400">Direct peer-to-peer textbooks and equipment</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                <ShieldCheck size={16} />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">Verified Peer Profiles</p>
-                <p className="text-[11px] text-slate-400">Hostel room and batch visibility on every listing</p>
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* Bottom badge */}
-          <div className="relative z-10 pt-4 border-t border-white/[0.08] text-slate-400 text-xs flex items-center gap-2">
-            <GraduationCap size={15} className="text-indigo-400 shrink-0" />
+          <div className="pt-4 border-t-[2px] border-black text-black/70 text-xs flex items-center gap-2 font-medium">
+            <GraduationCap size={15} className="text-black shrink-0" />
             <span>Built exclusively for university campuses</span>
           </div>
         </div>
 
         {/* Right: Form Panel */}
-        <div className="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-center bg-slate-950/40">
+        <div className="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-center bg-[#FFF8E7]">
           <div className="max-w-md w-full mx-auto">
             <div className="mb-8">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Sign In</h1>
-              <p className="text-slate-400 text-xs sm:text-sm mt-1.5">
+              <h1 className="text-2xl sm:text-3xl font-black text-black uppercase tracking-tight">Sign In</h1>
+              <p className="text-black/60 text-sm mt-1.5 font-medium normal-case tracking-normal">
                 Enter your campus credentials to access your listings and activity.
               </p>
             </div>
 
             {error && (
-              <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-medium mb-6 flex items-center gap-2">
-                <span>{error}</span>
+              <div className="p-3.5 bg-[#FF6B9D] border-[3px] border-black shadow-[3px_3px_0_0_#000] text-black text-xs font-bold mb-6 uppercase tracking-wide">
+                {error}
               </div>
             )}
 
@@ -170,7 +155,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                    className="text-black/50 hover:text-black transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -190,39 +175,33 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            {/* Quick Demo Logins Pill */}
-            <div className="mt-8 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+            {/* Quick Demo Logins */}
+            <div className="mt-8 p-4 bg-white border-[3px] border-black shadow-[3px_3px_0_0_#000]">
+              <p className="text-[10px] font-black text-black uppercase tracking-widest mb-3 font-mono">
                 Quick Demo Accounts (Password: campus123):
               </p>
               <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleDemoFill('arjun@campus.edu')}
-                  className="px-2.5 py-1 text-xs rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 font-medium transition-colors cursor-pointer"
-                >
-                  Arjun (Hostel 4)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoFill('priya@campus.edu')}
-                  className="px-2.5 py-1 text-xs rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 font-medium transition-colors cursor-pointer"
-                >
-                  Priya (Hostel 7)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoFill('rahul@campus.edu')}
-                  className="px-2.5 py-1 text-xs rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-medium transition-colors cursor-pointer"
-                >
-                  Rahul (Hostel 2)
-                </button>
+                {[
+                  { email: 'arjun@campus.edu', label: 'Arjun (Hostel 4)', bg: '#B79CFF' },
+                  { email: 'priya@campus.edu', label: 'Priya (Hostel 7)', bg: '#FF6B9D' },
+                  { email: 'rahul@campus.edu', label: 'Rahul (Hostel 2)', bg: '#00D26A' },
+                ].map(({ email: demoEmail, label, bg }) => (
+                  <button
+                    key={demoEmail}
+                    type="button"
+                    onClick={() => handleDemoFill(demoEmail)}
+                    className="px-2.5 py-1 text-xs font-black text-black border-[2px] border-black shadow-[2px_2px_0_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000] transition-all duration-100 cursor-pointer uppercase"
+                    style={{ backgroundColor: bg }}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <p className="text-center text-xs text-slate-400 mt-6">
-              Don’t have an account yet?{' '}
-              <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors">
+            <p className="text-center text-xs text-black/60 mt-6 font-medium">
+              Don't have an account yet?{' '}
+              <Link to="/register" className="text-black font-black underline hover:no-underline">
                 Sign up free
               </Link>
             </p>

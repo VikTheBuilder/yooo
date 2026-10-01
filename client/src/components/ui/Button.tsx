@@ -16,21 +16,21 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:from-indigo-600 hover:to-violet-700 border border-indigo-400/20',
+    'bg-[#FFE600] text-black border-[3px] border-black shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none',
   secondary:
-    'bg-white/10 hover:bg-white/15 text-white border border-white/15 backdrop-blur-md hover:border-white/25',
+    'bg-white text-black border-[3px] border-black shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none',
   outline:
-    'bg-transparent hover:bg-indigo-500/10 text-indigo-400 hover:text-indigo-300 border border-indigo-500/40 hover:border-indigo-400',
+    'bg-[#4D7CFF] text-black border-[3px] border-black shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none',
   ghost:
-    'bg-transparent hover:bg-white/5 text-slate-300 hover:text-white border border-transparent hover:border-white/10',
+    'bg-white text-black border-[3px] border-black shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none',
   danger:
-    'bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 hover:border-red-500/50',
+    'bg-[#FF6B9D] text-black border-[3px] border-black shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'px-3 py-1.5 text-xs font-semibold rounded-lg gap-1.5',
-  md: 'px-4 py-2 text-sm font-semibold rounded-xl gap-2',
-  lg: 'px-6 py-3 text-base font-bold rounded-xl gap-2.5',
+  sm: 'px-3 py-1.5 text-xs font-bold uppercase tracking-wide gap-1.5',
+  md: 'px-4 py-2 text-sm font-bold uppercase tracking-wide gap-2',
+  lg: 'px-6 py-3 text-base font-bold uppercase tracking-wide gap-2.5',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -52,11 +52,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <motion.button
         ref={ref}
-        whileTap={{ scale: disabled || isLoading ? 1 : 0.98 }}
-        whileHover={{ translateY: disabled || isLoading ? 0 : -1 }}
-        transition={{ duration: 0.15 }}
+        whileTap={{ scale: disabled || isLoading ? 1 : 0.97 }}
+        transition={{ duration: 0.08 }}
         disabled={disabled || isLoading}
-        className={`inline-flex items-center justify-center transition-all duration-200 cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+        className={`inline-flex items-center justify-center transition-all duration-100 cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed ${
           variantStyles[variant]
         } ${sizeStyles[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
         {...(props as any)}

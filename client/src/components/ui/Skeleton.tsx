@@ -16,8 +16,8 @@ export const Skeleton = ({
 }: SkeletonProps) => {
   return (
     <div
-      className={`bg-white/[0.06] animate-pulse ${
-        circle ? 'rounded-full' : 'rounded-xl'
+      className={`bg-black/10 border-[3px] border-black/20 animate-pulse ${
+        circle ? 'rounded-full' : ''
       } ${className}`}
       style={{
         width: typeof width === 'number' ? `${width}px` : width,

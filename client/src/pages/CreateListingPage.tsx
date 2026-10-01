@@ -103,21 +103,26 @@ function Section({
   title,
   subtitle,
   children,
+  accentColor = '#FFE600',
 }: {
   icon: typeof BookOpen;
   title: string;
   subtitle?: string;
   children: ReactNode;
+  accentColor?: string;
 }) {
   return (
-    <section className="glass p-6 sm:p-7 rounded-2xl border border-white/10 space-y-5">
-      <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-indigo-400 shrink-0">
+    <section className="bg-white border-[3px] border-black shadow-[4px_4px_0_0_#000] p-6 sm:p-7 space-y-5">
+      <div className="flex items-start gap-3 border-b-[2px] border-black pb-4">
+        <div
+          className="w-10 h-10 border-[2px] border-black flex items-center justify-center text-black shrink-0"
+          style={{ backgroundColor: accentColor }}
+        >
           <Icon size={18} />
         </div>
         <div>
-          <h2 className="text-white font-bold text-base">{title}</h2>
-          {subtitle && <p className="text-slate-400 text-xs mt-0.5">{subtitle}</p>}
+          <h2 className="text-black font-black text-base uppercase">{title}</h2>
+          {subtitle && <p className="text-black/60 text-xs mt-0.5 font-medium normal-case">{subtitle}</p>}
         </div>
       </div>
       {children}
@@ -218,12 +223,12 @@ export default function CreateListingPage() {
   const showError = (key: FieldKey) => (touched[key] ? errors[key] : undefined);
 
   return (
-    <div className="min-h-screen py-10 px-4">
+    <div className="min-h-screen py-10 px-4 bg-[#FFF8E7]">
       <div className="max-w-6xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
           <div className="mb-8">
-            <h1 className="text-3xl font-extrabold text-white mb-1">Sell / List an Item</h1>
-            <p className="text-slate-400 text-sm">
+            <h1 className="text-3xl font-black text-black uppercase tracking-tight mb-1">Sell / List an Item</h1>
+            <p className="text-black/60 text-sm font-medium normal-case">
               Post textbooks, notes, calculators, or lab gear for students on your campus.
             </p>
           </div>
@@ -231,14 +236,14 @@ export default function CreateListingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
             <form onSubmit={handleSubmit} className="lg:col-span-3 flex flex-col gap-6">
               {submitError && (
-                <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3">
+                <p className="text-sm font-bold text-black bg-[#FF6B9D] border-[3px] border-black shadow-[3px_3px_0_0_#000] px-4 py-3 uppercase">
                   {submitError}
                 </p>
               )}
 
-              <Section icon={BookOpen} title="Basic info" subtitle="What are you listing?">
+              <Section icon={BookOpen} title="Basic info" subtitle="What are you listing?" accentColor="#B79CFF">
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Category</p>
+                  <p className="text-xs font-black text-black uppercase tracking-widest mb-2">Category</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {CATEGORIES.map(c => {
                       const meta = CATEGORY_META[c];
@@ -248,11 +253,11 @@ export default function CreateListingPage() {
                           key={c}
                           type="button"
                           onClick={() => setField('category', c)}
-                          className="flex flex-col items-center gap-1 p-3 rounded-xl border text-xs font-medium transition-all"
+                          className="flex flex-col items-center gap-1 p-3 border-[2px] border-black text-xs font-black uppercase transition-all duration-100 cursor-pointer"
                           style={{
-                            background: active ? 'rgba(99,102,241,0.2)' : 'rgba(30,30,53,0.5)',
-                            borderColor: active ? '#818cf8' : 'rgba(255,255,255,0.08)',
-                            color: active ? '#c7d2fe' : '#94a3b8',
+                            backgroundColor: active ? meta.color : '#fff',
+                            color: '#000',
+                            boxShadow: active ? '3px 3px 0 0 #000' : '2px 2px 0 0 #000',
                           }}
                         >
                           <span className="text-2xl">{meta.emoji}</span>
@@ -274,25 +279,25 @@ export default function CreateListingPage() {
                 />
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2 block">
+                  <label className="text-xs font-black text-black uppercase tracking-widest mb-2 block">
                     Description
                   </label>
                   <textarea
                     name="description"
                     rows={4}
-                    className={`input resize-none w-full ${showError('description') ? 'border-red-500/60' : ''}`}
+                    className={`input resize-none w-full ${showError('description') ? 'border-[#FF6B9D]' : ''}`}
                     placeholder="Edition, highlights, completeness, pickup notes…"
                     value={form.description}
                     onChange={e => setField('description', e.target.value)}
                     onBlur={() => blurField('description')}
                   />
                   {showError('description') && (
-                    <p className="text-xs text-red-400 font-medium mt-1">{showError('description')}</p>
+                    <p className="text-xs font-bold text-[#FF6B9D] mt-1 uppercase">{showError('description')}</p>
                   )}
                 </div>
 
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Condition</p>
+                  <p className="text-xs font-black text-black uppercase tracking-widest mb-2">Condition</p>
                   <div className="grid grid-cols-3 gap-2">
                     {CONDITIONS.map(c => {
                       const active = form.condition === c;
@@ -301,11 +306,11 @@ export default function CreateListingPage() {
                           key={c}
                           type="button"
                           onClick={() => setField('condition', c)}
-                          className="p-2.5 rounded-xl border text-xs font-medium transition-all"
+                          className="p-2.5 border-[2px] border-black text-xs font-black uppercase transition-all duration-100 cursor-pointer"
                           style={{
-                            background: active ? 'rgba(99,102,241,0.2)' : 'rgba(30,30,53,0.5)',
-                            borderColor: active ? '#818cf8' : 'rgba(255,255,255,0.08)',
-                            color: active ? '#ffffff' : '#94a3b8',
+                            backgroundColor: active ? '#FFE600' : '#fff',
+                            color: '#000',
+                            boxShadow: active ? '3px 3px 0 0 #000' : '2px 2px 0 0 #000',
                           }}
                         >
                           {CONDITION_LABELS[c]}
@@ -316,7 +321,7 @@ export default function CreateListingPage() {
                 </div>
               </Section>
 
-              <Section icon={GraduationCap} title="Course & semester" subtitle="Help classmates find your item">
+              <Section icon={GraduationCap} title="Course & semester" subtitle="Help classmates find your item" accentColor="#4D7CFF">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
                     label="Course code"
@@ -336,7 +341,7 @@ export default function CreateListingPage() {
                 </div>
               </Section>
 
-              <Section icon={Tags} title="Listing mode" subtitle="Choose how you want to offer this item">
+              <Section icon={Tags} title="Listing mode" subtitle="Choose how you want to offer this item" accentColor="#00D26A">
                 <div className="grid grid-cols-3 gap-2">
                   {MODES.map(m => {
                     const meta = MODE_META[m];
@@ -357,11 +362,11 @@ export default function CreateListingPage() {
                             return next;
                           });
                         }}
-                        className="p-3 rounded-xl border text-sm font-semibold transition-all"
+                        className="p-3 border-[2px] border-black text-sm font-black uppercase transition-all duration-100 cursor-pointer"
                         style={{
-                          background: active ? meta.bg : 'rgba(30,30,53,0.5)',
-                          borderColor: active ? meta.color : 'rgba(255,255,255,0.08)',
-                          color: active ? meta.color : '#94a3b8',
+                          backgroundColor: active ? meta.bg : '#fff',
+                          color: '#000',
+                          boxShadow: active ? '3px 3px 0 0 #000' : '2px 2px 0 0 #000',
                         }}
                       >
                         {meta.label}
@@ -420,12 +425,12 @@ export default function CreateListingPage() {
             </form>
 
             <aside className="lg:col-span-2 lg:sticky lg:top-24 space-y-4">
-              <div className="flex items-center gap-2 text-slate-300 text-sm font-semibold">
-                <Eye size={16} className="text-indigo-400" />
+              <div className="flex items-center gap-2 text-black text-sm font-black uppercase">
+                <Eye size={16} className="text-black" />
                 Live preview
               </div>
               <ListingCard listing={previewListing} preview />
-              <p className="text-slate-500 text-xs text-center px-4">
+              <p className="text-black/50 text-xs text-center px-4 font-medium">
                 This is how your listing appears in the campus browse grid.
               </p>
             </aside>

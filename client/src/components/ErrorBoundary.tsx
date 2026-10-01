@@ -23,14 +23,14 @@ export default class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <main className="min-h-screen flex items-center justify-center px-4 py-12">
-          <section className="glass w-full max-w-md p-8 text-center border border-red-400/20">
-            <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-red-400/10 text-red-300 flex items-center justify-center">
-              <AlertTriangle size={22} />
+        <main className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#FFF8E7]">
+          <section className="bg-white border-[3px] border-black shadow-[6px_6px_0_0_#000] w-full max-w-md p-8 text-center">
+            <div className="w-12 h-12 mx-auto mb-4 bg-[#FF6B9D] border-[2px] border-black flex items-center justify-center shadow-[3px_3px_0_0_#000]">
+              <AlertTriangle size={22} className="text-black" />
             </div>
-            <h1 className="text-xl font-bold text-white">Something went wrong</h1>
-            <p className="mt-2 mb-6 text-sm text-slate-400">The page hit an unexpected error. Reload to continue.</p>
-            <button type="button" onClick={() => window.location.reload()} className="btn-primary">
+            <h1 className="text-xl font-black text-black uppercase">Something went wrong</h1>
+            <p className="mt-2 mb-6 text-sm text-black/60 font-medium normal-case">The page hit an unexpected error. Reload to continue.</p>
+            <button type="button" onClick={() => window.location.reload()} className="btn-primary inline-flex items-center gap-2">
               <RefreshCw size={15} /> Reload CampusSwap
             </button>
           </section>

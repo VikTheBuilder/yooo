@@ -18,21 +18,21 @@ export const EmptyState = ({
 }: EmptyStateProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      className={`glass p-12 text-center rounded-2xl max-w-md mx-auto flex flex-col items-center justify-center border border-white/10 ${className}`}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      className={`bg-white border-[3px] border-black shadow-[4px_4px_0_0_#000] p-12 text-center max-w-md mx-auto flex flex-col items-center justify-center ${className}`}
     >
       {icon ? (
-        <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center mb-4 text-3xl shadow-lg shadow-indigo-500/10">
+        <div className="w-16 h-16 bg-[#FFE600] border-[3px] border-black flex items-center justify-center mb-4 text-black shadow-[3px_3px_0_0_#000]">
           {icon}
         </div>
       ) : (
         <span className="text-5xl mb-4 block">🔍</span>
       )}
 
-      <h3 className="text-white font-bold text-lg mb-1.5 tracking-tight">{title}</h3>
-      <p className="text-slate-400 text-xs leading-relaxed mb-6 max-w-xs">{description}</p>
+      <h3 className="text-black font-black text-lg mb-1.5 uppercase tracking-tight">{title}</h3>
+      <p className="text-black/60 text-sm leading-relaxed mb-6 max-w-xs font-medium normal-case tracking-normal">{description}</p>
 
       {action && <div className="mt-1">{action}</div>}
     </motion.div>

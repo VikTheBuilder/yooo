@@ -10,36 +10,18 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   icon?: ReactNode;
 }
 
-const variantStyles: Record<BadgeVariant, { container: string; dot: string }> = {
-  success: {
-    container: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25',
-    dot: 'bg-emerald-400',
-  },
-  warning: {
-    container: 'bg-amber-500/10 text-amber-400 border-amber-500/25',
-    dot: 'bg-amber-400',
-  },
-  info: {
-    container: 'bg-sky-500/10 text-sky-400 border-sky-500/25',
-    dot: 'bg-sky-400',
-  },
-  purple: {
-    container: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
-    dot: 'bg-indigo-400',
-  },
-  danger: {
-    container: 'bg-rose-500/10 text-rose-400 border-rose-500/25',
-    dot: 'bg-rose-400',
-  },
-  neutral: {
-    container: 'bg-white/5 text-slate-400 border-white/10',
-    dot: 'bg-slate-400',
-  },
+const variantStyles: Record<BadgeVariant, { container: string }> = {
+  success:  { container: 'bg-[#00D26A] text-black border-black' },
+  warning:  { container: 'bg-[#FFE600] text-black border-black' },
+  info:     { container: 'bg-[#4D7CFF] text-black border-black' },
+  purple:   { container: 'bg-[#B79CFF] text-black border-black' },
+  danger:   { container: 'bg-[#FF6B9D] text-black border-black' },
+  neutral:  { container: 'bg-white text-black border-black' },
 };
 
 const sizeStyles: Record<BadgeSize, string> = {
-  sm: 'px-2 py-0.5 text-[10px] font-semibold',
-  md: 'px-2.5 py-1 text-xs font-semibold',
+  sm: 'px-1.5 py-0.5 text-[9px]',
+  md: 'px-2 py-0.5 text-[10px]',
 };
 
 export const Badge = ({
@@ -55,12 +37,12 @@ export const Badge = ({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border uppercase tracking-wider backdrop-blur-sm select-none ${
+      className={`inline-flex items-center gap-1 border-[2px] font-black uppercase tracking-widest select-none font-mono ${
         styles.container
       } ${sizeStyles[size]} ${className}`}
       {...props}
     >
-      {dot && <span className={`w-1.5 h-1.5 rounded-full ${styles.dot} animate-pulse`} />}
+      {dot && <span className="w-1.5 h-1.5 rounded-full bg-black" />}
       {icon && <span className="shrink-0">{icon}</span>}
       <span>{children}</span>
     </span>

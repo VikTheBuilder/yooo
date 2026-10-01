@@ -72,24 +72,24 @@ function RouteContent() {
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#0B1020] text-slate-100 flex flex-col selection:bg-indigo-500/30 selection:text-white">
+    <div className="min-h-screen bg-[#FFF8E7] text-black flex flex-col selection:bg-[#FFE600] selection:text-black">
       <Toaster
         position="top-right"
         toastOptions={{
           duration: 3500,
           style: {
-            background: 'rgba(15, 23, 42, 0.95)',
-            color: '#f8fafc',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '1rem',
+            background: '#fff',
+            color: '#000',
+            border: '3px solid #000',
+            borderRadius: '0',
             padding: '12px 16px',
             fontSize: '0.85rem',
-            fontWeight: 500,
-            boxShadow: '0 20px 30px -10px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.15)',
+            fontWeight: 700,
+            boxShadow: '4px 4px 0 0 #000',
+            fontFamily: "'Space Grotesk', sans-serif",
           },
-          success: { iconTheme: { primary: '#10b981', secondary: '#ffffff' } },
-          error: { iconTheme: { primary: '#f43f5e', secondary: '#ffffff' } },
+          success: { iconTheme: { primary: '#00D26A', secondary: '#000' } },
+          error: { iconTheme: { primary: '#FF6B9D', secondary: '#000' } },
         }}
       />
       <Navbar />

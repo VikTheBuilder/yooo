@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, CheckCircle2, Clock, MapPin, AlertCircle, HelpCircle, Send, RefreshCw } from 'lucide-react';
+import { Plus, CheckCircle2, Clock, MapPin, AlertCircle, HelpCircle, Send, RefreshCw, X } from 'lucide-react';
 import type { RequestItem } from '../types';
 import { SEMESTER_OPTIONS } from '../lib/constants';
 import { useAuth } from '../context/AuthContext';
@@ -26,7 +26,6 @@ export default function RequestsPage() {
   const [now, setNow] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
-  // New Request Form
   const [form, setForm] = useState({
     title: '',
     course: '',
@@ -119,20 +118,20 @@ export default function RequestsPage() {
   };
 
   return (
-    <div className="min-h-screen py-10 px-4">
+    <div className="min-h-screen py-10 px-4 bg-[#FFF8E7]">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-extrabold text-white mb-1">Student Request Board</h1>
-            <p className="text-slate-400 text-sm">
+            <h1 className="text-3xl font-black text-black uppercase tracking-tight mb-1">Student Request Board</h1>
+            <p className="text-black/60 text-sm font-medium normal-case tracking-normal">
               Can't find what you need? Post a request and campus peers will help you out.
             </p>
           </div>
 
           <button
             onClick={openRequestModal}
-            className="btn-primary flex items-center gap-2 self-start sm:self-auto py-2.5 px-4 shadow-lg text-sm"
+            className="btn-primary flex items-center gap-2 self-start sm:self-auto py-2.5 px-4 text-sm"
           >
             <Plus size={16} /> Post a Request
           </button>
@@ -141,29 +140,29 @@ export default function RequestsPage() {
         {/* Modal / Form for posting request */}
         <AnimatePresence>
           {showModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="glass p-6 sm:p-8 w-full max-w-lg rounded-2xl relative shadow-2xl border border-indigo-500/30"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
+                className="bg-[#FFF8E7] border-[3px] border-black shadow-[6px_6px_0_0_#000] p-6 sm:p-8 w-full max-w-lg relative"
               >
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <HelpCircle size={20} className="text-indigo-400" />
-                    Request an Academic Resource
+                  <h2 className="text-xl font-black text-black uppercase flex items-center gap-2">
+                    <HelpCircle size={20} className="text-black" />
+                    Request a Resource
                   </h2>
                   <button
                     onClick={() => setShowModal(false)}
                     aria-label="Close request form"
-                    className="text-slate-400 hover:text-white text-lg font-bold"
+                    className="p-1.5 border-[2px] border-black bg-[#FF6B9D] hover:shadow-[2px_2px_0_0_#000] transition-all cursor-pointer"
                   >
-                    ✕
+                    <X size={16} />
                   </button>
                 </div>
 
                 {error && (
-                  <div className="flex items-center gap-2 text-red-400 text-xs mb-4 p-3 rounded-lg bg-red-950/40 border border-red-500/30">
+                  <div className="flex items-center gap-2 text-black text-xs mb-4 p-3 bg-[#FF6B9D] border-[2px] border-black font-bold uppercase">
                     <AlertCircle size={15} />
                     {error}
                   </div>
@@ -171,7 +170,7 @@ export default function RequestsPage() {
 
                 <form onSubmit={handleCreateRequest} className="flex flex-col gap-4">
                   <div>
-                    <label className="block text-slate-400 text-xs font-semibold mb-1 uppercase tracking-wider">
+                    <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">
                       What are you looking for?
                     </label>
                     <input
@@ -188,12 +187,12 @@ export default function RequestsPage() {
                       }}
                       required
                     />
-                    {titleError && <p className="text-xs text-red-400 mt-1">{titleError}</p>}
+                    {titleError && <p className="text-xs font-bold text-[#FF6B9D] mt-1 uppercase">{titleError}</p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-slate-400 text-xs font-semibold mb-1 uppercase tracking-wider">
+                      <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">
                         Course Code
                       </label>
                       <input
@@ -205,7 +204,7 @@ export default function RequestsPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 text-xs font-semibold mb-1 uppercase tracking-wider">
+                      <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">
                         Semester
                       </label>
                       <select
@@ -221,7 +220,7 @@ export default function RequestsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 text-xs font-semibold mb-1 uppercase tracking-wider">
+                    <label className="block text-black text-xs font-black mb-1.5 uppercase tracking-widest">
                       Additional Note / Urgency
                     </label>
                     <textarea
@@ -261,23 +260,23 @@ export default function RequestsPage() {
         {loading ? (
           <div className="flex flex-col gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="glass h-28 animate-pulse rounded-2xl" />
+              <div key={i} className="bg-white border-[3px] border-black/20 h-28 animate-pulse" />
             ))}
           </div>
         ) : listError ? (
-          <div role="alert" className="glass p-10 text-center rounded-2xl max-w-md mx-auto">
-            <AlertCircle size={24} className="mx-auto mb-3 text-amber-300" />
-            <h3 className="text-white font-bold text-lg">Requests couldn’t load</h3>
-            <p className="text-slate-400 text-sm mt-1 mb-4">Check the server connection and try again.</p>
-            <button type="button" onClick={() => fetchRequests(true)} className="btn-ghost text-xs mx-auto">
+          <div role="alert" className="bg-white border-[3px] border-black shadow-[4px_4px_0_0_#000] p-10 text-center max-w-md mx-auto">
+            <AlertCircle size={24} className="mx-auto mb-3 text-black" />
+            <h3 className="text-black font-black text-lg uppercase">Requests couldn't load</h3>
+            <p className="text-black/60 text-sm mt-1 mb-4 font-medium normal-case">Check the server connection and try again.</p>
+            <button type="button" onClick={() => fetchRequests(true)} className="btn-ghost text-xs mx-auto flex items-center gap-1">
               <RefreshCw size={14} /> Retry
             </button>
           </div>
         ) : requests.length === 0 ? (
-          <div className="glass p-12 text-center rounded-2xl max-w-md mx-auto">
+          <div className="bg-white border-[3px] border-black shadow-[4px_4px_0_0_#000] p-12 text-center max-w-md mx-auto">
             <span className="text-4xl mb-3 block">🙋‍♂️</span>
-            <h3 className="text-white font-bold text-lg mb-1">No active requests</h3>
-            <p className="text-slate-400 text-sm mb-4">Be the first to post a request for books, equipment, or notes!</p>
+            <h3 className="text-black font-black text-lg mb-1 uppercase">No active requests</h3>
+            <p className="text-black/60 text-sm mb-4 font-medium normal-case">Be the first to post a request for books, equipment, or notes!</p>
             <button onClick={openRequestModal} className="btn-primary text-xs mx-auto">
               Post Request
             </button>
@@ -293,58 +292,53 @@ export default function RequestsPage() {
                   key={req.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="glass p-5 rounded-2xl flex flex-col justify-between border border-white/5 hover:border-indigo-500/30 transition-all shadow-md"
+                  className="bg-white border-[3px] border-black shadow-[4px_4px_0_0_#000] p-5 flex flex-col justify-between hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] transition-all duration-100"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-3 mb-2">
                       <div className="flex flex-wrap items-center gap-2">
                         {req.course && (
-                          <span className="badge text-[11px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300 font-semibold border border-indigo-500/30">
+                          <span className="badge bg-[#B79CFF] text-black border-black text-[10px] px-2 py-0.5">
                             {req.course}
                           </span>
                         )}
                         {req.semester && (
-                          <span className="badge text-[11px] px-2 py-0.5 bg-slate-800 text-slate-300">
+                          <span className="badge bg-white text-black border-black text-[10px] px-2 py-0.5">
                             {req.semester}
                           </span>
                         )}
                         <span
-                          className={`badge text-[10px] px-2 py-0.5 font-bold uppercase tracking-wider ${
-                            isOpen
-                              ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                          className={`badge text-[10px] px-2 py-0.5 border-black ${
+                            isOpen ? 'bg-[#FFE600] text-black' : 'bg-[#00D26A] text-black'
                           }`}
                         >
                           {req.status}
                         </span>
                       </div>
 
-                      <span className="text-[11px] text-slate-500 flex items-center gap-1 shrink-0">
+                      <span className="text-[11px] text-black/50 flex items-center gap-1 shrink-0 font-mono">
                         <Clock size={11} />
                         {timeAgo(req.created_at)}
                       </span>
                     </div>
 
-                    <h3 className="text-white font-bold text-base leading-snug mb-2">{req.title}</h3>
+                    <h3 className="text-black font-black text-base leading-snug mb-2 uppercase">{req.title}</h3>
 
                     {req.note && (
-                      <p className="text-slate-300 text-xs leading-relaxed mb-4 bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                      <p className="text-black/70 text-xs leading-relaxed mb-4 bg-[#FFF8E7] p-3 border-[2px] border-black/20 font-medium normal-case italic">
                         "{req.note}"
                       </p>
                     )}
                   </div>
 
-                  <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-2 mt-2">
+                  <div className="pt-3 border-t-[2px] border-black/20 flex items-center justify-between gap-2 mt-2">
                     <div className="flex items-center gap-2 text-xs">
-                      <div
-                        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-bold"
-                        style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
-                      >
+                      <div className="w-7 h-7 bg-black text-[#FFE600] flex items-center justify-center text-[11px] font-black">
                         {req.user_name?.[0]?.toUpperCase() ?? 'S'}
                       </div>
                       <div>
-                        <span className="text-white font-medium block">{req.user_name || 'Student'}</span>
-                        <span className="text-slate-500 text-[10px] flex items-center gap-1">
+                        <span className="text-black font-bold block uppercase text-[11px]">{req.user_name || 'Student'}</span>
+                        <span className="text-black/50 text-[10px] flex items-center gap-1 font-medium">
                           <MapPin size={10} />
                           {req.hostel || 'Campus'}
                         </span>
@@ -354,14 +348,14 @@ export default function RequestsPage() {
                     {isOwner && isOpen && (
                       <button
                         onClick={() => handleFulfill(req.id)}
-                        className="btn-ghost text-xs py-1 px-2.5 text-emerald-400 border-emerald-500/30 hover:border-emerald-500"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-black text-black uppercase border-[2px] border-black bg-[#00D26A] shadow-[2px_2px_0_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] transition-all duration-100 cursor-pointer"
                         title="Mark request fulfilled"
                       >
-                        <CheckCircle2 size={13} /> Mark Fulfilled
+                        <CheckCircle2 size={13} /> Fulfilled
                       </button>
                     )}
                     {!isOwner && isOpen && req.user_email && (
-                      <a href={contactRequesterHref(req)} className="btn-primary text-xs py-1.5 px-3 shrink-0">
+                      <a href={contactRequesterHref(req)} className="btn-primary text-xs py-1.5 px-3 shrink-0 inline-flex items-center gap-1">
                         <Send size={13} /> I have this
                       </a>
                     )}

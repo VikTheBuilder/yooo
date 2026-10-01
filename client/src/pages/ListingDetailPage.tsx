@@ -28,8 +28,8 @@ function DetailSkeleton() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <Skeleton className="h-5 w-32" />
-      <Skeleton className="h-48 w-full rounded-2xl" />
-      <Skeleton className="h-64 w-full rounded-2xl" />
+      <Skeleton className="h-48 w-full" />
+      <Skeleton className="h-64 w-full" />
     </div>
   );
 }
@@ -151,7 +151,7 @@ export default function ListingDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen py-10 px-4">
+      <div className="min-h-screen py-10 px-4 bg-[#FFF8E7]">
         <DetailSkeleton />
       </div>
     );
@@ -159,7 +159,7 @@ export default function ListingDetailPage() {
 
   if (loadError) {
     return (
-      <div className="min-h-screen py-16 px-4 flex items-center justify-center">
+      <div className="min-h-screen py-16 px-4 flex items-center justify-center bg-[#FFF8E7]">
         <EmptyState
           icon={<AlertCircle size={28} />}
           title="Couldn't load this listing"
@@ -176,7 +176,7 @@ export default function ListingDetailPage() {
 
   if (notFound || !listing) {
     return (
-      <div className="min-h-screen py-16 px-4 flex items-center justify-center">
+      <div className="min-h-screen py-16 px-4 flex items-center justify-center bg-[#FFF8E7]">
         <EmptyState
           icon="📭"
           title="Listing not found"
@@ -204,35 +204,37 @@ export default function ListingDetailPage() {
         : 'Propose swap';
 
   return (
-    <div className="min-h-screen py-10 px-4">
+    <div className="min-h-screen py-10 px-4 bg-[#FFF8E7]">
       <div className="max-w-3xl mx-auto">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors text-sm"
+          className="flex items-center gap-2 text-black/60 hover:text-black mb-6 transition-colors text-sm font-bold uppercase"
         >
           <ArrowLeft size={16} /> Back to browse
         </button>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass overflow-hidden shadow-2xl border border-white/10">
-          <div className={`relative p-8 sm:p-10 bg-gradient-to-br ${catMeta.gradient} overflow-hidden`}>
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-            <div className="relative flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-              <div className="w-24 h-24 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center text-5xl shrink-0 shadow-xl">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="border-[3px] border-black shadow-[6px_6px_0_0_#000] overflow-hidden bg-white">
+          {/* Category header */}
+          <div
+            className="relative p-8 sm:p-10 border-b-[3px] border-black"
+            style={{ backgroundColor: catMeta.color }}
+          >
+            <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+              <div className="w-24 h-24 bg-white border-[3px] border-black flex items-center justify-center text-5xl shrink-0 shadow-[4px_4px_0_0_#000]">
                 {catMeta.emoji}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white/80 text-xs font-bold uppercase tracking-widest mb-2">{catMeta.label}</p>
-                <h1 className="text-white text-2xl sm:text-4xl font-black leading-tight">{listing.title}</h1>
+                <p className="text-black text-xs font-black uppercase tracking-widest mb-2 font-mono">{catMeta.label}</p>
+                <h1 className="text-black text-2xl sm:text-4xl font-black leading-tight uppercase">{listing.title}</h1>
                 <div className="flex flex-wrap gap-2 mt-3">
                   {listing.course && (
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-black/25 text-white">
+                    <span className="badge bg-white text-black border-black text-xs px-2.5 py-1">
                       {listing.course}
                     </span>
                   )}
                   {listing.semester && (
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-black/25 text-white/90">
+                    <span className="badge bg-white text-black border-black text-xs px-2.5 py-1">
                       {listing.semester}
                     </span>
                   )}
@@ -244,37 +246,35 @@ export default function ListingDetailPage() {
           <div className="p-8 sm:p-10">
             <div className="flex flex-wrap items-center gap-3 mb-6">
               <span
-                className="badge text-sm px-3 py-1.5 font-semibold"
-                style={{ color: modeMeta.color, background: modeMeta.bg, border: `1px solid ${modeMeta.color}40` }}
+                className="badge text-sm px-3 py-1.5 font-black border-black"
+                style={{ backgroundColor: modeMeta.bg, color: modeMeta.color }}
               >
                 {modeMeta.label}
               </span>
-              <span className="badge text-sm px-3 py-1.5 text-slate-300 bg-white/5 border border-white/10">
+              <span className="badge text-sm px-3 py-1.5 text-black bg-white border-black">
                 {CONDITION_LABELS[listing.condition]}
               </span>
               <span
-                className={`badge text-xs px-3 py-1 font-semibold uppercase tracking-wider ${
-                  isAvailable
-                    ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/30'
-                    : 'text-amber-400 bg-amber-500/10 border border-amber-500/30'
+                className={`badge text-xs px-3 py-1 font-black uppercase tracking-wider border-black ${
+                  isAvailable ? 'bg-[#00D26A] text-black' : 'bg-[#FFE600] text-black'
                 }`}
               >
                 {listing.status}
               </span>
               <div className="ml-auto text-right">
                 {listing.mode === 'sell' && (
-                  <span className="text-3xl font-black text-emerald-400">
+                  <span className="text-3xl font-black text-black" style={{ fontFamily: "'Space Mono', monospace" }}>
                     {listing.price != null ? `₹${listing.price}` : 'Free'}
                   </span>
                 )}
                 {listing.mode === 'rent' && (
-                  <p className="text-3xl font-black text-indigo-400">
+                  <p className="text-3xl font-black text-black" style={{ fontFamily: "'Space Mono', monospace" }}>
                     ₹{listing.rent_price_per_week}
-                    <span className="text-sm font-semibold text-slate-400">/week</span>
+                    <span className="text-sm font-bold text-black/50">/week</span>
                   </p>
                 )}
                 {listing.mode === 'swap' && listing.swap_wanted && (
-                  <p className="text-sm font-semibold text-amber-300 max-w-[220px]">
+                  <p className="text-sm font-bold text-black max-w-[220px] normal-case">
                     Swap for {listing.swap_wanted}
                   </p>
                 )}
@@ -282,29 +282,30 @@ export default function ListingDetailPage() {
             </div>
 
             <div className="mb-8">
-              <h2 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2">Description</h2>
-              <p className="text-slate-200 leading-relaxed whitespace-pre-line">{listing.description}</p>
+              <h2 className="text-black text-xs font-black uppercase tracking-widest mb-2">Description</h2>
+              <p className="text-black/80 leading-relaxed whitespace-pre-line font-medium normal-case">{listing.description}</p>
             </div>
 
-            <div className="glass p-5 rounded-2xl mb-8 border border-white/10 bg-white/[0.02]">
-              <h2 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-4">Seller</h2>
+            {/* Seller info */}
+            <div className="bg-[#FFF8E7] p-5 border-[3px] border-black shadow-[3px_3px_0_0_#000] mb-8">
+              <h2 className="text-black text-xs font-black uppercase tracking-widest mb-4">Seller</h2>
               <div className="flex gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xl font-black shrink-0">
+                <div className="w-14 h-14 bg-black text-[#FFE600] flex items-center justify-center text-xl font-black shrink-0 border-[2px] border-black">
                   {listing.seller_name?.[0]?.toUpperCase() ?? 'S'}
                 </div>
                 <div className="flex-1 min-w-0 space-y-2">
-                  <p className="text-white font-bold text-lg">{listing.seller_name}</p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-400">
+                  <p className="text-black font-black text-lg uppercase">{listing.seller_name}</p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-black/60 font-medium">
                     <span className="inline-flex items-center gap-1.5">
-                      <MapPin size={14} className="text-indigo-400" />
+                      <MapPin size={14} className="text-black" />
                       {listing.seller_hostel || 'On campus'}
                     </span>
                     <span className="inline-flex items-center gap-1.5">
-                      <GraduationCap size={14} className="text-violet-400" />
+                      <GraduationCap size={14} className="text-black" />
                       {listing.seller_batch || 'Student'}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 flex items-center gap-1">
+                  <p className="text-xs text-black/50 flex items-center gap-1 font-mono">
                     <Clock size={12} />
                     Posted {new Date(listing.created_at).toLocaleDateString()}
                   </p>
@@ -313,7 +314,7 @@ export default function ListingDetailPage() {
             </div>
 
             {actionError && (
-              <div className="flex items-center gap-2 text-red-400 text-sm mb-4 p-3 rounded-xl bg-red-950/40 border border-red-500/30">
+              <div className="flex items-center gap-2 text-black text-sm mb-4 p-3 bg-[#FF6B9D] border-[3px] border-black font-bold uppercase">
                 <AlertCircle size={16} />
                 {actionError}
               </div>
@@ -323,7 +324,7 @@ export default function ListingDetailPage() {
               {isOwner ? (
                 <>
                   {!listing.has_transactions && (
-                    <Link to={`/listings/${listing.id}/edit`} className="btn-ghost flex-1 justify-center">
+                    <Link to={`/listings/${listing.id}/edit`} className="btn-ghost flex-1 justify-center inline-flex items-center gap-2">
                       <Edit3 size={16} /> Edit
                     </Link>
                   )}
@@ -331,7 +332,7 @@ export default function ListingDetailPage() {
                     <button
                       type="button"
                       onClick={handleMarkClosed}
-                      className="btn-ghost flex-1 justify-center text-amber-300 border-amber-500/30"
+                      className="inline-flex items-center justify-center gap-2 flex-1 py-2 px-4 border-[3px] border-black bg-[#FFE600] text-black font-black text-sm uppercase shadow-[4px_4px_0_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] transition-all duration-100 cursor-pointer"
                     >
                       <CheckCircle2 size={16} /> Mark as sold
                     </button>
@@ -339,12 +340,12 @@ export default function ListingDetailPage() {
                     <button
                       type="button"
                       onClick={handleMarkAvailable}
-                      className="btn-ghost flex-1 justify-center text-emerald-300 border-emerald-500/30"
+                      className="inline-flex items-center justify-center gap-2 flex-1 py-2 px-4 border-[3px] border-black bg-[#00D26A] text-black font-black text-sm uppercase shadow-[4px_4px_0_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] transition-all duration-100 cursor-pointer"
                     >
                       Mark available again
                     </button>
                   ) : (
-                    <p className="flex-1 text-center text-xs text-slate-500 self-center">Deal recorded</p>
+                    <p className="flex-1 text-center text-xs text-black/50 self-center font-medium">Deal recorded</p>
                   )}
                   {!listing.has_transactions && (
                     <Button
@@ -374,7 +375,7 @@ export default function ListingDetailPage() {
                   {actionLabel}
                 </Button>
               ) : (
-                <p className="flex-1 p-4 rounded-xl bg-slate-800/60 border border-slate-700 text-center text-slate-400 text-sm">
+                <p className="flex-1 p-4 bg-white border-[3px] border-black text-center text-black/60 text-sm font-medium">
                   This listing is no longer available.
                 </p>
               )}
@@ -383,6 +384,7 @@ export default function ListingDetailPage() {
         </motion.div>
       </div>
 
+      {/* Transaction confirm modal */}
       <AnimatePresence>
         {confirmModal && (
           <>
@@ -390,14 +392,14 @@ export default function ListingDetailPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-50 bg-black/60"
               onClick={() => setConfirmModal(null)}
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 12 }}
-              className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 glass p-6 sm:p-8 rounded-2xl border border-emerald-500/30 shadow-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 16 }}
+              className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 bg-[#FFF8E7] border-[3px] border-black shadow-[6px_6px_0_0_#000] p-6 sm:p-8"
               role="dialog"
               aria-modal="true"
               aria-labelledby="confirm-title"
@@ -405,59 +407,59 @@ export default function ListingDetailPage() {
               <button
                 type="button"
                 onClick={() => setConfirmModal(null)}
-                className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5"
+                className="absolute top-4 right-4 p-1.5 border-[2px] border-black bg-[#FF6B9D] hover:shadow-[2px_2px_0_0_#000] transition-all cursor-pointer"
                 aria-label="Close"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
 
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
-                  <CheckCircle2 size={24} />
+                <div className="w-12 h-12 bg-[#00D26A] border-[2px] border-black flex items-center justify-center shadow-[3px_3px_0_0_#000]">
+                  <CheckCircle2 size={24} className="text-black" />
                 </div>
                 <div>
-                  <h3 id="confirm-title" className="text-white font-bold text-lg">
+                  <h3 id="confirm-title" className="text-black font-black text-lg uppercase">
                     Request confirmed
                   </h3>
-                  <p className="text-slate-400 text-xs">Coordinate a campus handover with the seller.</p>
+                  <p className="text-black/60 text-xs font-medium normal-case">Coordinate a campus handover with the seller.</p>
                 </div>
               </div>
 
-              <p className="text-slate-300 text-sm leading-relaxed mb-4">
+              <p className="text-black/70 text-sm leading-relaxed mb-4 font-medium normal-case">
                 Email the seller to arrange pickup at their hostel or a campus meetup spot.
               </p>
 
               {confirmModal.sellerEmail ? (
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-white/[0.04] border border-white/10 mb-4">
-                  <Mail size={16} className="text-indigo-400 shrink-0" />
+                <div className="flex items-center gap-2 p-3 bg-white border-[2px] border-black shadow-[2px_2px_0_0_#000] mb-4">
+                  <Mail size={16} className="text-black shrink-0" />
                   <a
                     href={`mailto:${confirmModal.sellerEmail}`}
-                    className="text-indigo-300 font-semibold text-sm truncate flex-1 hover:underline"
+                    className="text-black font-bold text-sm truncate flex-1 hover:underline"
                   >
                     {confirmModal.sellerEmail}
                   </a>
                   <button
                     type="button"
                     onClick={() => copyEmail(confirmModal.sellerEmail)}
-                    className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5"
+                    className="p-2 border-[2px] border-black hover:bg-[#FFE600] transition-colors"
                     title="Copy email"
                   >
                     <Copy size={14} />
                   </button>
                 </div>
               ) : (
-                <p className="text-amber-400 text-sm mb-4">Seller contact is unavailable — check My Activity.</p>
+                <p className="text-black font-bold text-sm mb-4 bg-[#FFE600] p-2 border-[2px] border-black">Seller contact is unavailable — check My Activity.</p>
               )}
 
               {confirmModal.transaction.due_date && (
-                <div className="flex items-center gap-2 text-emerald-400 text-xs font-semibold bg-emerald-950/40 px-3 py-2 rounded-lg border border-emerald-500/25 mb-4">
+                <div className="flex items-center gap-2 text-black text-xs font-black bg-[#00D26A] px-3 py-2 border-[2px] border-black mb-4 uppercase">
                   <Calendar size={14} />
                   Return due {new Date(confirmModal.transaction.due_date).toLocaleDateString()}
                 </div>
               )}
 
               <div className="flex flex-col sm:flex-row gap-2">
-                <Link to="/my-listings" className="btn-primary flex-1 justify-center text-sm py-2.5">
+                <Link to="/my-listings" className="btn-primary flex-1 justify-center text-sm py-2.5 inline-flex items-center">
                   View my activity
                 </Link>
                 <button type="button" onClick={() => setConfirmModal(null)} className="btn-ghost flex-1 justify-center text-sm py-2.5">
